@@ -8,7 +8,7 @@ Roisin Rumsey - Designer
 
 Sarah Turmel, Emily Scott, Dean Hauser - Developers
 
-### Tentative Mission/Problem Statement: As a team, we wish to work cohesively and work together to create a project that will fix a problem close to our hearts.
+### Tentative Mission/Problem Statement: As a team, we wish to work cohesively together to create a project that will fix a problem close to our hearts.
 
 Human task games
 
