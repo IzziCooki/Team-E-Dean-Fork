@@ -8,6 +8,8 @@ Roisin Rumsey - Designer
 
 Sarah Turmel, Emily Scott, Dean Hauser - Developers
 
+***
+
 ### Problem Statement: As a team, we wish to work cohesively together to create a project that will fix a problem close to our hearts.
 
 Human task games
@@ -21,3 +23,26 @@ Human task games
 4.) Prior programs do not motivate users to do tasks. If there was a way to make people motivated to do these tasks by positively reinforcing the desired behavior and making the tasks feel like a game, it could help them to complete their tasks.
 
 How can we make a game like web application that helps people stay motivated and turn their daily responsibilities into enjoyable challenges?
+
+***
+
+### Life Habitat Installation and Build Instructions:
+
+Steps 1-3 only have to be done once. After that, as long as you are in the right folder, you can jump to step 4
+
+1.) Clone this repository.
+
+    git clone https://github.com/COS420-Fall24/Team-E
+
+2.) Navigate to the folder holding the app code
+
+    cd code
+
+3.) Install dependencies
+
+    npm install
+
+4.) Launch the app
+
+    npm run start
+    
