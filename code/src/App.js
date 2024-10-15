@@ -1,6 +1,6 @@
 import logo from "./logo.svg";
 import logo2 from "./logo2.svg";
-import { Button } from "react-bootstrap";
+import { Button, Col } from "react-bootstrap";
 import "./App.css";
 
 function App() {
@@ -24,7 +24,21 @@ function App() {
         <p>© F2024 - Ethernet, Inc. All rights reserved. Address Address</p>
       </div>
       <div className="App-panel">
-        <img src={logo2} className="App-logo2" alt="logo" object-fit="fill" />
+        <Col>
+          <div className="Column 1" style={{width: "85%", height: "90%"}}>
+            <img src={logo2} className="App-logo3" alt="logo" object-fit="fill" />
+          </div>
+        </Col>
+        <Col>
+          <div className="column2" style={{position: "absolute", right: "0", bottom: "50%", width: "20%"}}>
+              <label>
+                Email: <input name="My Input"/>
+              </label>
+              <label>
+                Password: <input name="My Input"/>
+              </label>
+          </div>
+        </Col>  
       </div>
       <div className="App-background">{}</div>
     </>
