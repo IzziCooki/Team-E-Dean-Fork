@@ -7,6 +7,7 @@ function App() {
   return (
     <>
       <div className="App">
+        <header className="App-header2"></header>
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <img src={logo2} className="App-logo2" alt="logo" />
@@ -41,11 +42,11 @@ function App() {
             style={{
               position: "absolute",
               right: "0",
-              bottom: "50%",
+              bottom: "23%",
               width: "20%",
             }}
           >
-            <p>Sign In:</p>
+            <p className="App-SignIn">Sign In</p>
             <label>
               Email: <input name="My Input" />
             </label>
