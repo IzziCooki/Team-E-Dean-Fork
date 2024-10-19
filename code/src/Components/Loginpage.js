@@ -8,6 +8,7 @@ function App() {
   return (
     <>
       <div className="App">
+        <header className="App-header2"></header>
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <img src={logo2} className="App-logo2" alt="logo" />
@@ -24,22 +25,41 @@ function App() {
       <div className="App-bottom">
         <p>© F2024 - Ethernet, Inc. All rights reserved. Address Address</p>
       </div>
+      <div className="App-panel2"></div>
       <div className="App-panel">
         <Col>
-          <div className="Column 1" style={{width: "85%", height: "90%"}}>
-            <img src={logo2} className="App-logo3" alt="logo" object-fit="fill" />
+          <div className="Column 1" style={{ width: "85%", height: "90%" }}>
+            <img
+              src={logo2}
+              className="App-logo3"
+              alt="logo"
+              object-fit="fill"
+            />
           </div>
         </Col>
         <Col>
-          <div className="column2" style={{position: "absolute", right: "0", bottom: "50%", width: "20%"}}>
-              <label>
-                Email: <input name="My Input"/>
-              </label>
-              <label>
-                Password: <input name="My Input"/>
-              </label>
+          <div
+            className="column2"
+            style={{
+              position: "absolute",
+              right: "0",
+              bottom: "23%",
+              width: "20%",
+            }}
+          >
+            <p className="App-SignIn">Sign In</p>
+            <label>
+              Email: <input name="My Input" />
+            </label>
+            <label>
+              Password: <input name="My Input" />
+            </label>
+            <p> </p>
+            <Button onPress={() => {}} variant="primary">
+              Sign In
+            </Button>
           </div>
-        </Col>  
+        </Col>
       </div>
       <div className="App-background">{}</div>
     </>
