@@ -1,9 +1,9 @@
-import React from 'react'
+import React from "react";
 import logo from "./../logo.svg";
 import logo2 from "./../logo2.svg";
 import { Button, Col } from "react-bootstrap";
 //import { Link } from 'react-router-dom'; //might be useful later
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import "./../App.css";
 
 function App() {
@@ -16,7 +16,13 @@ function App() {
           <img src={logo} className="App-logo" alt="logo" />
           <img src={logo2} className="App-logo2" alt="logo" />
           <div className="App-buttons">
-            <Button onClick={() => {navigate('/register')}} variant="primary" size="small">
+            <Button
+              onClick={() => {
+                navigate("/register");
+              }}
+              variant="primary"
+              size="small"
+            >
               Register
             </Button>
           </div>
@@ -55,7 +61,12 @@ function App() {
               Password: <input name="My Input" />
             </label>
             <p> </p>
-            <Button onClick={() => {navigate('/avatar')}} variant="primary">
+            <Button
+              onClick={() => {
+                navigate("/home");
+              }}
+              variant="primary"
+            >
               Sign In
             </Button>
           </div>
