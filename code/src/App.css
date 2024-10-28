@@ -25,6 +25,13 @@
   display: flex;
   gap: 10px;
 }
+.App-buttons2 {
+  position: absolute;
+  left: "5%";
+  bottom: 0;
+  display: flex;
+  gap: 10px;
+}
 
 .App-header2 {
   display: flex;
@@ -77,6 +84,62 @@
   background: #ffffff;
 }
 
+.App-panel3 {
+  position: fixed;
+  display: flex;
+  top: 12%;
+  left: 7%;
+  width: 34%;
+  height: 73%;
+  background: #ffffff;
+}
+
+.App-panel4 {
+  position: fixed;
+  display: flex;
+  top: 12%;
+  left: 45%;
+  width: 22%;
+  height: 73%;
+  background: #ffffff;
+  font-family: var(--sds-typography-body-font-family);
+  border-radius: 10px;
+  font-style: normal;
+  line-height: normal;
+  text-align: left;
+}
+
+.App-colHead {
+  font-size: 110%;
+  font-weight: 600;
+  height: 5%;
+}
+.App-colBody {
+  font-size: 90%;
+  font-weight: 400;
+  height: 2%;
+}
+.App-colBody2 {
+  font-size: 80%;
+  font-weight: 90;
+  height: 5%;
+}
+
+.App-panel5 {
+  position: fixed;
+  display: flex;
+  top: 12%;
+  left: 71%;
+  width: 22%;
+  height: 70%;
+  background: #ffffff;
+  font-family: var(--sds-typography-body-font-family);
+  border-radius: 10px;
+  font-style: normal;
+  line-height: normal;
+  text-align: left;
+}
+
 .App-panel {
   position: fixed;
   display: flex;
@@ -85,6 +148,18 @@
   width: 58%;
   height: 40%;
   background: #ffffff;
+}
+
+.SeparatorRoot {
+  background-color: black;
+}
+.SeparatorRoot[data-orientation="horizontal"] {
+  height: 1px;
+  width: 100%;
+}
+.SeparatorRoot[data-orientation="vertical"] {
+  height: 100%;
+  width: 1px;
 }
 
 .App-SignIn {
