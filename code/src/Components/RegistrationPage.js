@@ -24,7 +24,7 @@ function App() {
       </div>
       <div className="App-panel6">
         <Row className='Row 1' style={{height: "10%", width: "100%", background: "#fefae0"}}>
-          <div className="logo" style={{position: "absolute", left: "25%", top: "2%", height: "10%", width: "100%"}}>
+          <div className="logo" style={{position: "absolute", left: "25%", top: "0%", height: "20%", width: "100%"}}>
             <img
               src={logo2}
               className="App-logo4"
@@ -34,21 +34,21 @@ function App() {
           </div>
         </Row>
         <Row className='Row 2' style={{position: "absolute", height: "90%", width: "100%", bottom: "0%"}}>
-          <p className="App-SignUp" style={{position: "absolute", left: "43%", top: "0%", height: "10%", width: "100%"}}>Sign Up Form</p>
-            <label className='Register-Email' style={{position: "absolute", left: "32%", top: "15%", height: "10%", width: "100%"}}>
+          <p className="App-SignUp" style={{position: "absolute", left: "43%", top: "%", height: "10%", width: "100%"}}>Sign Up Form</p>
+            <label className='Register-Email' style={{position: "absolute", left: "32%", top: "20%", height: "10%", width: "100%"}}>
               Email: <input name="My Input" />
             </label>
-            <label className='Register-Password' style={{position: "absolute", left: "28.5%", top: "25%", height: "10%", width: "100%"}}>
+            <label className='Register-Password' style={{position: "absolute", left: "28.5%", top: "30%", height: "10%", width: "100%"}}>
               Password: <input type="password" name="My Input" />
             </label>
-            <label className='Register-Confirm' style={{position: "absolute", left: "21%", top: "35%", height: "10%", width: "100%"}}>
+            <label className='Register-Confirm' style={{position: "absolute", left: "21%", top: "40%", height: "10%", width: "100%"}}>
                Confirm Password: <input type="password" name="My Input" />
             </label>
-            <label className='Register-User' style={{position: "absolute", left: "28%", top: "45%", height: "10%", width: "100%"}}>
+            <label className='Register-User' style={{position: "absolute", left: "28%", top: "50%", height: "10%", width: "100%"}}>
                Username: <input name="My Input" />
             </label>
             <p> </p>
-            <div className='Sign Up' style={{position: "absolute", left: "45%", top: "55%", height: "10%", width: "100%"}}>
+            <div className='Sign Up' style={{position: "absolute", left: "45%", top: "60%", height: "10%", width: "100%"}}>
               <Button
                 onClick={() => {
                   navigate("/");
