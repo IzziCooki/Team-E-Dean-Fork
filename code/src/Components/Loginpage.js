@@ -58,7 +58,7 @@ function App() {
               Email: <input name="My Input" />
             </label>
             <label>
-              Password: <input name="My Input" />
+              Password: <input type="password" name="My Input" />
             </label>
             <p> </p>
             <Button
