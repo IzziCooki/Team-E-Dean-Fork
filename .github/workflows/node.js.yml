@@ -1,4 +1,4 @@
-name: node.js ContinuousIntegration
+name: Node.js ContinuousIntegration
 
 on:
   push:
@@ -13,18 +13,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Check out the code first so you have access to the repository files
+      - name: Checkout code
+        uses: actions/checkout@v2 
+
+      # Step 2: Set up Node.js (this configures the Node.js environment for the rest of the workflow)
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16'
 
-      - name: Checkout code
-        uses: actions/checkout@v2 
-
-      - name: Install dependencies
+      # Step 3: Install dependencies and build
+      - name: Install dependencies and build
         run: |
-          cd code
-          npm install               
+          cd code   # Adjusts directory if your package.json is in a "code" folder
+          npm install
           npm install react-router-dom
           npm install --save-dev @babel/plugin-proposal-private-property-in-object
-          npm run build 
+          npm run build
