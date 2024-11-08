@@ -29,5 +29,4 @@ jobs:
           cd code   # Adjusts directory if your package.json is in a "code" folder
           npm install
           npm install react-router-dom
-          npm install --save-dev @babel/plugin-proposal-private-property-in-object
           npm run build
