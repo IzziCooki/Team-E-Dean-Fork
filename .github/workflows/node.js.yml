@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+  
+      - name: Enable debug logging
+        run: echo "ACTIONS_RUNNER_DEBUG=true" >> $GITHUB_ENV
+
       # Step 1: Check out the code first so you have access to the repository files
       - name: Checkout code
         uses: actions/checkout@v2 
@@ -26,7 +30,7 @@ jobs:
       # Step 3: Install dependencies and build
       - name: Install dependencies and build
         run: |
-          cd code   # Adjusts directory if your package.json is in a "code" folder
+          cd code
           npm install
           npm install react-router-dom
           npm run build
