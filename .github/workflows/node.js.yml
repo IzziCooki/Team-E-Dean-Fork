@@ -26,6 +26,4 @@ jobs:
           cd code
           npm install               
           npm install react-router-dom 
-
-      - name: Run build
-        run: npm run build 
+          npm run build 
