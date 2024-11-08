@@ -55,5 +55,5 @@ function App() {
     </>
   );
 }
-//adding a test comment
+//testing continuous integration
 export default App;
