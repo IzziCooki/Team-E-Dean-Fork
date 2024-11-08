@@ -1,33 +1,27 @@
-import logo from "./logo.svg";
-import logo2 from "./logo2.svg";
-import { Button } from "react-bootstrap";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import LoginPage from "./Components/Loginpage";
+import HomePage from "./Components/Homepage";
+import RegistrationPage from "./Components/RegistrationPage";
+import TaskPage from "./Components/TaskPage";
+import AvatarPage from "./Components/Avatarpage";
+
 import "./App.css";
 
 function App() {
   return (
-    <>
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <img src={logo2} className="App-logo2" alt="logo" />
-          <div className="App-buttons">
-            <Button onClick={() => {}} variant="neutral" size="small">
-              Sign in
-            </Button>
-            <Button onClick={() => {}} variant="primary" size="small">
-              Register
-            </Button>
-          </div>
-        </header>
+    <Router>
+      <div>
+        <Routes>
+          <Route exact path="/" element={<LoginPage />} />
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/task" element={<TaskPage />} />
+          <Route path="/register" element={<RegistrationPage />} />
+          <Route path="/avatar" element={<AvatarPage />} />
+        </Routes>
       </div>
-      <div className="App-bottom">
-        <p>© F2024 - Ethernet, Inc. All rights reserved. Address Address</p>
-      </div>
-      <div className="App-panel">
-        <img src={logo2} className="App-logo2" alt="logo" object-fit="fill" />
-      </div>
-      <div className="App-background">{}</div>
-    </>
+    </Router>
   );
 }
 
