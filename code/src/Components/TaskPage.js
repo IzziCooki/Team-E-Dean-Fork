@@ -1,7 +1,7 @@
 import React from "react";
 import logo from "./../logo.svg";
 import logo2 from "./../logo2.svg";
-import { Button, Col } from "react-bootstrap";
+import { Button} from "react-bootstrap";
 //import { Link } from 'react-router-dom'; // might be useful later
 import { useNavigate } from "react-router-dom";
 import "./../App.css";
