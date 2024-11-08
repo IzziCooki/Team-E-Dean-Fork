@@ -1,4 +1,4 @@
-name: Node.js ContinuousIntegration
+name: CI
 
 on:
   push:
@@ -13,24 +13,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-  
-      - name: Enable debug logging
-        run: echo "ACTIONS_RUNNER_DEBUG=true" >> $GITHUB_ENV
-
-      # Step 1: Check out the code first so you have access to the repository files
       - name: Checkout code
-        uses: actions/checkout@v2 
+        uses: actions/checkout@v2
 
-      # Step 2: Set up Node.js (this configures the Node.js environment for the rest of the workflow)
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
           node-version: '16'
 
-      # Step 3: Install dependencies and build
-      - name: Install dependencies and build
-        run: |
-          cd code
-          npm install
-          npm install react-router-dom
-          npm run build
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
