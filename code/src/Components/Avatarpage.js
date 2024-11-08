@@ -55,5 +55,5 @@ function App() {
     </>
   );
 }
-//TESITNG CI
+//testing continuous integration
 export default App;
