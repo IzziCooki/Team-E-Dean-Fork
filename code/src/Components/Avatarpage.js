@@ -56,5 +56,4 @@ function App() {
   );
 }
 //testing continuous integration
-{:fihpas}
 export default App;
