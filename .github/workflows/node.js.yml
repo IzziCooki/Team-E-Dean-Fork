@@ -20,12 +20,10 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v2 
-        
-      - name: Change directory to code folder
-        run: cd code
 
       - name: Install dependencies
         run: |
+          cd code
           npm install               
           npm install react-router-dom 
 
