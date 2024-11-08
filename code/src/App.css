@@ -114,6 +114,13 @@
   text-align: left;
 }
 
+.App-bordered {
+  border: 2px solid gray;
+  width: 115%;
+  height: 32%;
+  margin-bottom: 2%;
+}
+
 .App-colHead {
   font-size: 110%;
   font-weight: 600;
