@@ -25,5 +25,6 @@ jobs:
         run: |
           cd code
           npm install               
-          npm install react-router-dom 
+          npm install react-router-dom
+          npm install --save-dev @babel/plugin-proposal-private-property-in-object
           npm run build 
