@@ -18,6 +18,9 @@ jobs:
         with:
           node-version: '16'
 
+      - name: Change directory to code folder
+        run: cd code
+        
       - name: Install dependencies
         run: |
           npm install               
