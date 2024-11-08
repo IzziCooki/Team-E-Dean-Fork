@@ -49,7 +49,7 @@ function App() {
         </header>
       </div>
       <div className="App-bottom">
-        <p>© F2024 - Ethernet, Inc. All rights reserved. Address Address</p>
+        <p>© F2024 - Ethernet Testing CI, Inc. All rights reserved. Address Address</p>
       </div>
       <div className="App-background">{}</div>
     </>
