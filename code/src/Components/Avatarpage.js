@@ -2,7 +2,7 @@ import React from "react";
 import logo from "./../logo.svg";
 import logo2 from "./../logo2.svg";
 //import star from "./../star.svg";
-import { Button, Col, Row } from "react-bootstrap";
+import { Button} from "react-bootstrap";
 //import { Link } from 'react-router-dom'; // might be useful later
 import { useNavigate } from "react-router-dom";
 //import * as Separator from "@radix-ui/react-separator";
@@ -55,5 +55,5 @@ function App() {
     </>
   );
 }
-
+//testing continuous integration ahiuhiugeih
 export default App;
