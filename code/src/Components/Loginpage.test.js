@@ -1,24 +1,20 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import App from "./Loginpage";
+import { BrowserRouter as Router } from "react-router-dom";
 
-//Test 1
-test("can register somewhere", () => {
-  render(<App />);
-  const linkElement = screen.getByText(/Register/i);
-  expect(linkElement).toBeInTheDocument();
-});
-
-//Test 2
-test("there are two buttons", () => {
-  render(<App />);
-  const adders = screen.queryAllByRole("button");
-  expect(adders).toHaveLength(2);
-});
-
-//Test 3
-test("app has 3 images", () => {
-  render(<App />);
-  const header = screen.queryAllByRole("img");
-  expect(header).toHaveLength(3);
+describe("Loginpage component", () => {
+  test("renders loginpage component", () => {
+    render(
+      <Router>
+        <App />
+      </Router>
+    );
+    const linkElement = screen.getByText(/Register/i);
+    expect(linkElement).toBeInTheDocument();
+    const adders = screen.queryAllByRole("button");
+    expect(adders).toHaveLength(2);
+    const header = screen.queryAllByRole("img");
+    expect(header).toHaveLength(3);
+  });
 });
