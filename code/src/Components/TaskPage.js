@@ -7,6 +7,12 @@ import { Button, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "./../App.css";
 
+var modal = document.getElementById("myModal");
+var btn = document.getElementById("newTaskButton");
+btn.onclick = function () {
+  modal.style.display = "block";
+};
+
 function App() {
   const navigate = useNavigate();
   return (
@@ -191,28 +197,25 @@ function App() {
               </Col>
             </div>
           </div>
-          <div
+          <Button
+            id="newTaskButton"
+            onclick={() => {
+              modal.style.display = "block";
+            }}
             style={{
+              marginTop: "2%",
+              marginRight: "5%",
+              width: "12%",
               height: "10%",
-              paddingTop: "3%",
-              paddingRight: "7%",
+              backgroundColor: "#606c38",
+              border: "#606c38",
+              color: "white",
+              fontSize: "90%",
+              borderRadius: "10px",
             }}
           >
-            <Button
-              className="newTaskButton"
-              style={{
-                width: "150%",
-                height: "100%",
-                backgroundColor: "#606c38",
-                border: "#606c38",
-                color: "white",
-                fontSize: "90%",
-                borderRadius: "10px",
-              }}
-            >
-              New Task
-            </Button>
-          </div>
+            New Task
+          </Button>
         </Col>
         <Col
           style={{
@@ -300,6 +303,19 @@ function App() {
         <p>© F2024 - Ethernet, Inc. All rights reserved. Address Address</p>
       </div>
       <div className="App-background">{}</div>
+
+      <div id="myModal" class="modal">
+        <div class="modal-content">
+          <Button
+            onClick={() => {
+              modal.style.display = "none";
+            }}
+          >
+            Close
+          </Button>
+          <p>Some text in the Modal..</p>
+        </div>
+      </div>
     </>
   );
 }
