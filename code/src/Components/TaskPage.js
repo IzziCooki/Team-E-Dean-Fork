@@ -8,10 +8,6 @@ import { useNavigate } from "react-router-dom";
 import "./../App.css";
 
 var modal = document.getElementById("myModal");
-var btn = document.getElementById("newTaskButton");
-btn.onclick = function () {
-  modal.style.display = "block";
-};
 
 function App() {
   const navigate = useNavigate();
