@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import LoginPage from "./Components/Loginpage";
+import Login from "./Components/Loginpage";
 import HomePage from "./Components/Homepage";
-import RegistrationPage from "./Components/RegistrationPage";
+import SignUp from "./Components/RegisterPage";
 import TaskPage from "./Components/TaskPage";
 import AvatarPage from "./Components/Avatarpage";
 
@@ -14,10 +14,12 @@ function App() {
     <Router>
       <div>
         <Routes>
-          <Route exact path="/" element={<LoginPage />} />
+          <Route exact path="/" element={<SignUp />} />
+          <Route exact path="/login" element={<Login />} />
+
           <Route path="/home" element={<HomePage />} />
           <Route path="/task" element={<TaskPage />} />
-          <Route path="/register" element={<RegistrationPage />} />
+          <Route path="/register" element={<SignUp />} />
           <Route path="/avatar" element={<AvatarPage />} />
         </Routes>
       </div>
