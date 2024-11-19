@@ -3,7 +3,7 @@ import logo from "./../logo.svg";
 import logo2 from "./../logo2.svg";
 import { Button, Row } from "react-bootstrap";
 //import { Link } from 'react-router-dom'; // might be useful later
-import {NavLink, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 import "./../App.css";
 import {  createUserWithEmailAndPassword  } from 'firebase/auth';
 import { auth } from './firebase.js';
@@ -16,17 +16,26 @@ const SignUp = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('');
   const [userName, setUsername] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
 
   const onSubmit = async (e) => {
       e.preventDefault()
+     
 
-      await createUserWithEmailAndPassword(auth, email, password)
+      function checkPassword(password, confirmPassword){
+        const bool = password === confirmPassword ? true : false
+        return bool
+      }
+
+      if (checkPassword(password, confirmPassword)){
+        await createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in
             const user = userCredential.user;
             
             console.log(user);
-            navigate("/login")
+            navigate("/")
             // Add user info to database
             try {
                     // "user" is the database document
@@ -49,6 +58,13 @@ const SignUp = () => {
             alert(errorMessage)
             // ..
         });
+
+      }else{
+        alert("Passwords do no match!")
+        
+      }
+
+
 
 
     }
@@ -98,7 +114,15 @@ const SignUp = () => {
                                 name="My Input" />
             </label>
             <label className='Register-Confirm' style={{position: "absolute", left: "21%", top: "40%", height: "10%", width: "100%"}}>
-               Confirm Password: <input type="password" name="My Input" placeholder={password} />
+            
+               Confirm Password: <input type="password"
+                                label="Create password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)} 
+                                required                                 
+                                placeholder="" 
+                                name="My Input"  
+                                />
             </label>
             <label className='Register-User' style={{position: "absolute", left: "28%", top: "50%", height: "10%", width: "100%"}}>
                Username: <input name="My Input"
