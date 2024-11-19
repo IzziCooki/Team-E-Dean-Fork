@@ -3,14 +3,28 @@ import logo from "./../logo.svg";
 import logo2 from "./../logo2.svg";
 import Award from "./../Award.svg";
 import { Button, Col } from "react-bootstrap";
-//import { Link } from 'react-router-dom'; // might be useful later
 import { useNavigate } from "react-router-dom";
 import "./../App.css";
 
-var modal = document.getElementById("myModal");
-
 function App() {
   const navigate = useNavigate();
+
+  // Function to open the modal
+  const openModal = () => {
+    const modal = document.getElementById("myModal");
+    if (modal) {
+      modal.style.display = "block";
+    }
+  };
+
+  // Function to close the modal
+  const closeModal = () => {
+    const modal = document.getElementById("myModal");
+    if (modal) {
+      modal.style.display = "none";
+    }
+  };
+
   return (
     <>
       <div className="App">
@@ -80,7 +94,7 @@ function App() {
             >
               Date (today)
             </p>
-            <div class="App-bordered">
+            <div className="App-bordered">
               <Col
                 className="Col2"
                 style={{ width: "11%", position: "fixed", display: "flex" }}
@@ -136,7 +150,7 @@ function App() {
                 </div>
               </Col>
             </div>
-            <div class="App-bordered">
+            <div className="App-bordered">
               <Col
                 className="Col2"
                 style={{ width: "11%", position: "fixed", display: "flex" }}
@@ -195,9 +209,7 @@ function App() {
           </div>
           <Button
             id="newTaskButton"
-            onClick={() => {
-              modal.style.display = "block";
-            }}
+            onClick={openModal}
             style={{
               marginTop: "2%",
               marginRight: "5%",
@@ -233,7 +245,11 @@ function App() {
           >
             <img src={Award} alt="award" style={{}}></img>
             <p
-              style={{ fontSize: "110%", fontWeight: "600", lineHeight: "50%" }}
+              style={{
+                fontSize: "110%",
+                fontWeight: "600",
+                lineHeight: "50%",
+              }}
             >
               100%
             </p>
@@ -300,15 +316,9 @@ function App() {
       </div>
       <div className="App-background">{}</div>
 
-      <div id="myModal" class="modal">
-        <div class="modal-content">
-          <Button
-            onClick={() => {
-              modal.style.display = "none";
-            }}
-          >
-            Close
-          </Button>
+      <div id="myModal" className="modal">
+        <div className="modal-content">
+          <Button onClick={closeModal}>Close</Button>
           <p>Some text in the Modal..</p>
         </div>
       </div>
