@@ -34,7 +34,9 @@ const SignUp = () => {
                         id: user.uid,
                         email: email,
                         username: userName,
+                        tasks: []
                       });
+
                 } catch (e) {
                     console.error("Error adding document: ", e);
                 }
