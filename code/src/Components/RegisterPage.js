@@ -75,7 +75,7 @@ const SignUp = () => {
           <img src={logo} className="App-logo" alt="logo" />
           <img src={logo2} className="App-logo2" alt="logo" />
           <div className="App-buttons">
-            <Button onClick={() => {navigate('/login')}} variant="neutral" size="small">
+            <Button onClick={() => {navigate('/')}} variant="neutral" size="small">
               Login
             </Button>
           </div>
