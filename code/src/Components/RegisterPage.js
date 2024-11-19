@@ -24,8 +24,7 @@ const SignUp = () => {
      
 
       function checkPassword(password, confirmPassword){
-        const bool = password === confirmPassword ? true : false
-        return bool
+        return password === confirmPassword ? true : false 
       }
 
       if (checkPassword(password, confirmPassword)){
