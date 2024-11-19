@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import logo from "./../logo.svg";
 import logo2 from "./../logo2.svg";
 import star from "./../star.svg";
@@ -7,9 +7,108 @@ import { Button, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import * as Separator from "@radix-ui/react-separator";
 import "./../App.css";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from '../Components/firebase';
+import { db } from "./firebase";
+import { doc, getDoc } from 'firebase/firestore';
+
 
 function App() {
   const navigate = useNavigate();
+  const [userName, setUserName] = useState("");
+
+  useEffect(()=>{
+        onAuthStateChanged(auth, (user) => {
+          
+            if (user) {
+              // User is signed in, see docs for a list of available properties
+              // https://firebase.google.com/docs/reference/js/firebase.User
+              const uid = user.uid;
+              const email = user.email;
+              // ...
+              console.log("uid", uid)
+              console.log("email", email)
+              fetchUserData()
+
+
+            } else {
+              // User is signed out
+              // ...
+              console.log("user is logged out")
+              navigate("/login");
+              
+            }
+          });
+
+    },)
+
+        const getUserTasks = () => {
+        try {
+            let userId = null;
+
+            // Wait for the authenticated user
+            onAuthStateChanged(auth, async (user) => {
+              if (user) {
+                userId = user.uid; // Get the user's UID
+
+
+                    // Fetch Firestore document
+              const userRef = doc(db, 'user', userId); // Reference to the user's document
+              const userDoc = await getDoc(userRef);
+
+
+              console.log(userDoc.data())
+                
+              } else {
+                console.log('No user is signed in.');
+              }
+            });
+          } catch (error) {
+            console.error('Error fetching document:', error);
+          }
+        }
+
+        
+        
+        const fetchUserData = async () => {
+          try {
+            let userId = null;
+
+            // Wait for the authenticated user
+            onAuthStateChanged(auth, async (user) => {
+              if (user) {
+                userId = user.uid; // Get the user's UID
+                console.log('User ID:', userId);
+
+                // Fetch Firestore document
+                const userRef = doc(db, 'user', userId); // Reference to the user's document
+                const userDoc = await getDoc(userRef);
+
+                if (userDoc.exists()) { 
+                  const data = userDoc.data();
+                  setUserName(data.username) // Access the document data
+                } else {
+                  console.log('No such document!');
+                }
+              } else {
+                console.log('No user is signed in.');
+              }
+            });
+          } catch (error) {
+            console.error('Error fetching document:', error);
+          }
+        };
+
+
+        const handleLogout = () => {               
+        signOut(auth).then(() => {
+        // Sign-out successful.
+            navigate("/");
+            console.log("Signed out successfully")
+        }).catch((error) => {
+        // An error happened.
+        });
+    }
   return (
     <>
       <div className="App">
@@ -18,6 +117,9 @@ function App() {
           <img src={logo} className="App-logo" alt="logo" />
           <img src={logo2} className="App-logo2" alt="logo" />
           <div className="App-buttons">
+            <div>
+              Hello {userName}
+            </div>
             <Button
               onClick={() => {
                 navigate("/task");
@@ -28,9 +130,7 @@ function App() {
               Tasks
             </Button>
             <Button
-              onClick={() => {
-                navigate("/");
-              }}
+              onClick={handleLogout}
               variant="neutral"
               size="small"
             >
@@ -38,6 +138,8 @@ function App() {
             </Button>
           </div>
         </header>
+
+        <h2>{}</h2>
         <div>
           <Col className="App-panel3">
             <div className="Column 1" style={{ width: "100%", height: "100%" }}>
@@ -148,7 +250,7 @@ function App() {
                 <p className="App-colBody">Task 2</p>
                 <p className="App-colBody2">Deadline</p>
                 <p>
-                  <Button onClick={() => {}} variant="primary" size="small">
+                  <Button onClick={() => {getUserTasks()}} variant="primary" size="small">
                     Hide
                   </Button>
                 </p>
