@@ -195,7 +195,7 @@ function App() {
           </div>
           <Button
             id="newTaskButton"
-            onclick={() => {
+            onClick={() => {
               modal.style.display = "block";
             }}
             style={{
