@@ -40,7 +40,7 @@ function App() {
             }
           });
 
-    }, [])
+    },)
 
         const getUserTasks = () => {
         try {
