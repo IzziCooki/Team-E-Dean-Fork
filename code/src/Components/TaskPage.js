@@ -6,7 +6,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from './firebase';
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { editTask } from './TaskLogic'
+//import { editTask } from './TaskLogic' //not yet implemented
 import Calendar from 'react-calendar'
 import "./../App.css";
 
@@ -20,7 +20,7 @@ function TaskPage() {
   const [dueMinute, setDueMinute] = useState(0);
   const [isRepeat, setIsRepeat] = useState(false);
   const [repeatType, setRepeatType] = useState("");
-  const [isComplete, setIsComplete] = useState(false);
+  //const [isComplete, setIsComplete] = useState(false); //not yet implemented
   const TASKTYPE = ["Healthy Eating", "Rest", "Knowledge", "Social", "Tidyness", "Mental"]
   const REPEATTYPE = ["Daily", "Weekly", "Bi-Weekly", "Monthly"]
   const hours = [];
@@ -53,7 +53,7 @@ function TaskPage() {
     setDueMinute(event.target.checked);
   }
 
-  function setTimeHour(event) {
+  function setTimeHour(event) { //these 2 set time functions are currently bugged and do not work
     updateHour(event)
     let newDueDate = new Date()
     newDueDate = dueDate.setHours(dueHour,dueMinute,0)
