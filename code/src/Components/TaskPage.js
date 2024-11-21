@@ -16,12 +16,22 @@ function TaskPage() {
   const [task, setTask] = useState("");
   const [type, setType] = useState("");
   const [dueDate, setDueDate] = useState(new Date());
-  const [dueTime, setDueTime] = useState(Date);
+  const [dueHour, setDueHour] = useState(0);
+  const [dueMinute, setDueMinute] = useState(0);
   const [isRepeat, setIsRepeat] = useState(false);
   const [repeatType, setRepeatType] = useState("");
   const [isComplete, setIsComplete] = useState(false);
   const TASKTYPE = ["Healthy Eating", "Rest", "Knowledge", "Social", "Tidyness", "Mental"]
   const REPEATTYPE = ["Daily", "Weekly", "Bi-Weekly", "Monthly"]
+  const hours = [];
+  const minutes = [];
+
+  for (let i = 0; i < 24; i++) {
+    hours.push(i);
+  }
+  for (let i = 0; i < 60; i++) {
+    minutes.push(i);
+  }
 
   function updateType(event) {
     setType(event.target.value);
@@ -35,7 +45,27 @@ function TaskPage() {
     setRepeatType(event.target.checked);
   }
 
+  function updateHour(event) {
+    setDueHour(event.target.checked);
+  }
 
+  function updateMinute(event) {
+    setDueMinute(event.target.checked);
+  }
+
+  function setTimeHour(event) {
+    updateHour(event)
+    let newDueDate = new Date()
+    newDueDate = dueDate.setHours(dueHour,dueMinute,0)
+    setDueDate(newDueDate)
+  }
+
+  function setTimeMinute(event) {
+    updateMinute(event)
+    let newDueDate = new Date()
+    newDueDate = dueDate.setHours(dueHour,dueMinute,0)
+    setDueDate(newDueDate)
+  }
   
   // Function to open the modal
   const openEditTask = () => {
@@ -422,7 +452,7 @@ function TaskPage() {
                   )}
                 </Form.Select>
             </Form.Group>
-            <Form.Group controlId="formTitle" as={Row}>
+            <Form.Group controlId="formDate" as={Row}>
                 <Form.Label column sm={2}>
                     Date:
                 </Form.Label>
@@ -436,6 +466,16 @@ function TaskPage() {
                             setDueDate(event.target.value);
                         }}
                     />
+                    <Form.Select value={dueHour} onChange={setTimeHour}>
+                      { hours.map((type) =>
+                        <option key={type} value={type}>{type}</option>
+                      )}
+                    </Form.Select>
+                    <Form.Select value={dueMinute} onChange={setTimeMinute}>
+                      { minutes.map((type) =>
+                        <option key={type} value={type}>{type}</option>
+                      )}
+                    </Form.Select>
                 </Col>
             </Form.Group>
             <Calendar onChange={setDueDate} value={dueDate}/>
