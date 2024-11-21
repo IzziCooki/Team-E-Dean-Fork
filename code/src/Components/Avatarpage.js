@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 //import * as Separator from "@radix-ui/react-separator";
 import "./../App.css";
 
-function App() {
+function AvatarPage() {
   const navigate = useNavigate();
   return (
     <>
@@ -56,4 +56,4 @@ function App() {
   );
 }
 //testing continuous integration ahiuhiugeih
-export default App;
+export default AvatarPage;

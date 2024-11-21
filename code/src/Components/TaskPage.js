@@ -1,16 +1,122 @@
-import React from "react";
+import React, {useEffect, useState } from "react";
 import logo from "./../logo.svg";
 import logo2 from "./../logo2.svg";
 import Award from "./../Award.svg";
-import { Button, Col } from "react-bootstrap";
-//import { Link } from 'react-router-dom'; // might be useful later
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from './firebase';
+import { Button, Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+//import { editTask } from './TaskLogic' //not yet implemented
+import Calendar from 'react-calendar'
 import "./../App.css";
 
-var modal = document.getElementById("myModal");
-
-function App() {
+function TaskPage() {
   const navigate = useNavigate();
+  const [title, setTitle] = useState("");
+  const [task, setTask] = useState("");
+  const [type, setType] = useState("");
+  const [dueDate, setDueDate] = useState(new Date());
+  const [dueHour, setDueHour] = useState(0);
+  const [dueMinute, setDueMinute] = useState(0);
+  const [isRepeat, setIsRepeat] = useState(false);
+  const [repeatType, setRepeatType] = useState("");
+  //const [isComplete, setIsComplete] = useState(false); //not yet implemented
+  const TASKTYPE = ["Healthy Eating", "Rest", "Knowledge", "Social", "Tidyness", "Mental"]
+  const REPEATTYPE = ["Daily", "Weekly", "Bi-Weekly", "Monthly"]
+  const hours = [];
+  const minutes = [];
+
+  for (let i = 0; i < 24; i++) {
+    hours.push(i);
+  }
+  for (let i = 0; i < 60; i++) {
+    minutes.push(i);
+  }
+
+  function updateType(event) {
+    setType(event.target.value);
+  }
+
+  function updateRepeat(event) {
+    setIsRepeat(event.target.checked);
+  }
+
+  function updateRepeatType(event) {
+    setRepeatType(event.target.checked);
+  }
+
+  function updateHour(event) {
+    setDueHour(event.target.checked);
+  }
+
+  function updateMinute(event) {
+    setDueMinute(event.target.checked);
+  }
+
+  function setTimeHour(event) { //these 2 set time functions are currently bugged and do not work
+    updateHour(event)
+    let newDueDate = new Date()
+    newDueDate = dueDate.setHours(dueHour,dueMinute,0)
+    setDueDate(newDueDate)
+  }
+
+  function setTimeMinute(event) {
+    updateMinute(event)
+    let newDueDate = new Date()
+    newDueDate = dueDate.setHours(dueHour,dueMinute,0)
+    setDueDate(newDueDate)
+  }
+  
+  // Function to open the modal
+  const openEditTask = () => {
+    const modal = document.getElementById("editTask");
+    if (modal) {
+      modal.style.display = "block";
+    }
+  };
+
+  // Function to close the modal
+  const closeEditTask = () => {
+    const modal = document.getElementById("editTask");
+    if (modal) {
+      modal.style.display = "none";
+    }
+  };
+
+  useEffect(()=>{
+    onAuthStateChanged(auth, (user) => {
+      
+        if (user) {
+          // User is signed in, see docs for a list of available properties
+          // https://firebase.google.com/docs/reference/js/firebase.User
+          const uid = user.uid;
+          const email = user.email;
+          // ...
+          console.log("uid", uid)
+          console.log("email", email)
+
+
+        } else {
+          // User is signed out
+          // ...
+          console.log("user is logged out")
+          navigate("/");
+          
+        }
+      });
+
+},)
+
+  const handleLogout = () => {               
+    signOut(auth).then(() => {
+    // Sign-out successful.
+        navigate("/");
+        console.log("Signed out successfully")
+    }).catch((error) => {
+    // An error happened.
+    });
+  }
+
   return (
     <>
       <div className="App">
@@ -29,9 +135,7 @@ function App() {
               Home
             </Button>
             <Button
-              onClick={() => {
-                navigate("/");
-              }}
+              onClick={handleLogout}
               variant="neutral"
               size="small"
             >
@@ -80,7 +184,7 @@ function App() {
             >
               Date (today)
             </p>
-            <div class="App-bordered">
+            <div className="App-bordered">
               <Col
                 className="Col2"
                 style={{ width: "11%", position: "fixed", display: "flex" }}
@@ -136,7 +240,7 @@ function App() {
                 </div>
               </Col>
             </div>
-            <div class="App-bordered">
+            <div className="App-bordered">
               <Col
                 className="Col2"
                 style={{ width: "11%", position: "fixed", display: "flex" }}
@@ -195,9 +299,7 @@ function App() {
           </div>
           <Button
             id="newTaskButton"
-            onClick={() => {
-              modal.style.display = "block";
-            }}
+            onClick={openEditTask}
             style={{
               marginTop: "2%",
               marginRight: "5%",
@@ -233,7 +335,11 @@ function App() {
           >
             <img src={Award} alt="award" style={{}}></img>
             <p
-              style={{ fontSize: "110%", fontWeight: "600", lineHeight: "50%" }}
+              style={{
+                fontSize: "110%",
+                fontWeight: "600",
+                lineHeight: "50%",
+              }}
             >
               100%
             </p>
@@ -300,20 +406,100 @@ function App() {
       </div>
       <div className="App-background">{}</div>
 
-      <div id="myModal" class="modal">
-        <div class="modal-content">
-          <Button
-            onClick={() => {
-              modal.style.display = "none";
-            }}
-          >
-            Close
-          </Button>
-          <p>Some text in the Modal..</p>
+      <div id="editTask" className="modal">
+        <div className="modal-content">
+          <Button onClick={closeEditTask}>Close</Button>
+          <Form.Group controlId="formTitle" as={Row}>
+                <Form.Label column sm={2}>
+                    Title:
+                </Form.Label>
+                <Col>
+                    <Form.Control
+                        value={title}
+                        onChange={(
+                            event,
+                        ) => {
+                            setTitle(event.target.value);
+                        }}
+                    />
+                </Col>
+            </Form.Group>
+            <Form.Group controlId="formDescription" as={Row}>
+                <Form.Label column sm={2}>
+                    Description:
+                </Form.Label>
+                <Col>
+                    <Form.Control
+                        size="lg"
+                        as="textarea"
+                        rows={5}
+                        cols={50}
+                        type="text"
+                        value={task}
+                        onChange={(
+                            event,
+                        ) => {
+                            setTask(event.target.value);
+                        }}
+                    />
+                </Col>
+            </Form.Group>
+            <Form.Group controlId="tasktype">
+                <Form.Label>Task Type:</Form.Label>
+                <Form.Select value={type} onChange={updateType}>
+                  { TASKTYPE.map((type) =>
+                    <option key={type} value={type}>{type}</option>
+                  )}
+                </Form.Select>
+            </Form.Group>
+            <Form.Group controlId="formDate" as={Row}>
+                <Form.Label column sm={2}>
+                    Date:
+                </Form.Label>
+                <Col>
+                    <Form.Control
+                        value={dueDate}
+                        placeholder={Date.now()}
+                        onChange={(
+                            event,
+                        ) => {
+                            setDueDate(event.target.value);
+                        }}
+                    />
+                    <Form.Select value={dueHour} onChange={setTimeHour}>
+                      { hours.map((type) =>
+                        <option key={type} value={type}>{type}</option>
+                      )}
+                    </Form.Select>
+                    <Form.Select value={dueMinute} onChange={setTimeMinute}>
+                      { minutes.map((type) =>
+                        <option key={type} value={type}>{type}</option>
+                      )}
+                    </Form.Select>
+                </Col>
+            </Form.Group>
+            <Calendar onChange={setDueDate} value={dueDate}/>
+            <Form.Check
+                type="checkbox"
+                id="is-repeat-check"
+                label="Repeat?"
+                checked={isRepeat}
+                onChange={updateRepeat}
+            />
+            {isRepeat && (
+              <Form.Group controlId="tasktype">
+                  <Form.Label>How often?</Form.Label>
+                  <Form.Select value={repeatType} onChange={updateRepeatType}>
+                    { REPEATTYPE.map((type) =>
+                      <option key={type} value={type}>{type}</option>
+                    )}
+                  </Form.Select>
+              </Form.Group>
+              )}
         </div>
       </div>
     </>
   );
 }
 
-export default App;
+export default TaskPage;
