@@ -7,6 +7,7 @@ import { auth } from './firebase';
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { editTask } from './TaskLogic'
+import Calendar from 'react-calendar'
 import "./../App.css";
 
 function TaskPage() {
@@ -14,11 +15,12 @@ function TaskPage() {
   const [title, setTitle] = useState("");
   const [task, setTask] = useState("");
   const [type, setType] = useState("");
-  const [dueDate, setDueDate] = useState(Date);
+  const [dueDate, setDueDate] = useState(new Date());
   const [dueTime, setDueTime] = useState(Date);
   const [isRepeat, setIsRepeat] = useState(Date);
   const [isComplete, setIsComplete] = useState(false);
   const TASKTYPE = ["Healthy Eating", "Rest", "Knowledge", "Social", "Tidyness", "Mental"]
+
 
   function updateType(event) {
     setType(event.target.value);
@@ -425,6 +427,7 @@ function TaskPage() {
                     />
                 </Col>
             </Form.Group>
+            <Calendar onChange={setDueDate} value={dueDate}/>
         </div>
       </div>
     </>
