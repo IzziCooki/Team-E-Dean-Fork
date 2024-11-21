@@ -7,13 +7,31 @@ import {Button, Col} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 //import * as Separator from "@radix-ui/react-separator";
 import "./../App.css";
-import {
-  SelectField,
-  SelectItem,
-  } from "primitives"
+import { useState } from "react";
+
 
 function App() {
   const navigate = useNavigate();
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+
+  const toggleDropdown = () => {
+    setDropdownVisible((prevState) => !prevState);
+  };
+
+  const closeDropdown = (e) => {
+    if (!e.target.closest(".dropdown")) {
+      setDropdownVisible(false);
+    }
+  };
+
+  React.useEffect(() => {
+    window.addEventListener("click", closeDropdown);
+    return () => {
+      window.removeEventListener("click", closeDropdown);
+    };
+  }, []);
+
+
   return (
     <>
       <div className="App">
@@ -89,21 +107,80 @@ function App() {
               opacity: .8,
               border: "2px solid lightgray",
               borderRadius: "10px",
+              // justifyContent: 'space-evenly',
+              // alignContent: "space-evenly",
+              padding: 0,
             }}>
-          <div className="avatarHeader"
-          style={{
-            paddingLeft: "1em",
-            fontWeight: 700,
-          }}>
-            <p>Customize Avatar</p>
-          </div>
-          <div className="avatarSubheader"
-          style={{
-            marginTop: 25,
-            marginLeft: -130,
-          }}>
-            <p>Avatar Subheading</p>
-          </div>
+
+
+          {/* Dropdown Menu */}
+          <div
+            className="avatarHeader"
+            style={{
+               paddingLeft: "1em",
+               fontWeight: 700,
+               border: "2px solid lightgray",
+               height: '10%',
+            }}>
+
+              <p>Customize Avatar</p>
+              </div>
+
+            <div className="avatarSubheader"
+            style={{
+              marginTop: "5%",
+              marginLeft: -133,
+              border: "2px solid lightgray",
+              height: "5%",
+            }}>
+              Avatar Subheading
+            </div>
+
+            <div
+              className="dropdown"
+              style={{
+                position: "relative",
+                margin: "1em auto",
+              }}
+            >
+              <button
+                className="dropbtn"
+                style={{
+                  backgroundColor: "white",
+                  color: "black",
+                  padding: "10px 20px",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  border: "1px solid dimgray",
+                  width: "150px"
+                }}
+                onClick={toggleDropdown}
+              >
+                Value 
+              </button>
+              {dropdownVisible && (
+                <div
+                  className="dropdown-content"
+                  style={{
+                    position: "absolute",
+                    backgroundColor: "white",
+                    border: "1px solid dimgray",
+                    borderRadius: "5px",
+                    width: "150px",
+                    //top: "100%",
+                    left: "0",
+                    opacity: 0.8,
+                    zIndex: 1,
+                    maxHeight: "40px",
+                    overflowY: 'auto',
+                  }}
+                >
+                  <p style={{ padding: "10px", margin: 0 }}>Option 1</p>
+                  <p style={{ padding: "10px", margin: 0 }}>Option 2</p>
+                  <p style={{ padding: "10px", margin: 0 }}>Option 3</p>
+                </div>
+              )}
+            </div>
           </Col>
 
         </div>
@@ -115,4 +192,5 @@ function App() {
     </>
   );
 }
+
 export default App;
