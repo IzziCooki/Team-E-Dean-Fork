@@ -2,11 +2,15 @@ import React from "react";
 import logo from "./../logo.svg";
 import logo2 from "./../logo2.svg";
 //import star from "./../star.svg";
-import { Button} from "react-bootstrap";
+import {Button, Col} from "react-bootstrap";
 //import { Link } from 'react-router-dom'; // might be useful later
 import { useNavigate } from "react-router-dom";
 //import * as Separator from "@radix-ui/react-separator";
 import "./../App.css";
+import {
+  SelectField,
+  SelectItem,
+  } from "primitives"
 
 function App() {
   const navigate = useNavigate();
@@ -47,6 +51,62 @@ function App() {
             </Button>
           </div>
         </header>
+        <div>
+
+
+          {/* Avatar Display column */}
+          <Col
+            className="avatarCol"
+            style={{
+              position: "absolute",
+              display: "flex",
+              top: "15%",
+              left: "5%",
+              width: "30%",
+              height: "70%",
+              backgroundColor: "white",
+              opacity: .8,
+              border: "2px solid lightgray",
+              borderRadius: "10px",
+            }}
+          >
+            {/* Avatar Goes Here */}
+            <div className="avatarPlaceHolder"> 
+              <p>Avatar image here later</p>
+            </div>
+          </Col>
+
+          <Col
+            className="customizeAvatar"
+            style={{
+              position: "absolute",
+              display: "flex",
+              top: "15%",
+              left: "40%",
+              width: "55%",
+              height: "70%",
+              backgroundColor: "white",
+              opacity: .8,
+              border: "2px solid lightgray",
+              borderRadius: "10px",
+            }}>
+          <div className="avatarHeader"
+          style={{
+            paddingLeft: "1em",
+            fontWeight: 700,
+          }}>
+            <p>Customize Avatar</p>
+          </div>
+          <div className="avatarSubheader"
+          style={{
+            marginTop: 25,
+            marginLeft: -130,
+          }}>
+            <p>Avatar Subheading</p>
+          </div>
+          </Col>
+
+        </div>
       </div>
       <div className="App-bottom">
         <p>© F2024 - Ethernet, Inc. All rights reserved. Address Address</p>
@@ -55,5 +115,4 @@ function App() {
     </>
   );
 }
-//testing continuous integration ahiuhiugeih
 export default App;
