@@ -17,14 +17,25 @@ function TaskPage() {
   const [type, setType] = useState("");
   const [dueDate, setDueDate] = useState(new Date());
   const [dueTime, setDueTime] = useState(Date);
-  const [isRepeat, setIsRepeat] = useState(Date);
+  const [isRepeat, setIsRepeat] = useState(false);
+  const [repeatType, setRepeatType] = useState("");
   const [isComplete, setIsComplete] = useState(false);
   const TASKTYPE = ["Healthy Eating", "Rest", "Knowledge", "Social", "Tidyness", "Mental"]
-
+  const REPEATTYPE = ["Daily", "Weekly", "Bi-Weekly", "Monthly"]
 
   function updateType(event) {
     setType(event.target.value);
-}
+  }
+
+  function updateRepeat(event) {
+    setIsRepeat(event.target.checked);
+  }
+
+  function updateRepeatType(event) {
+    setRepeatType(event.target.checked);
+  }
+
+
   
   // Function to open the modal
   const openEditTask = () => {
@@ -428,6 +439,23 @@ function TaskPage() {
                 </Col>
             </Form.Group>
             <Calendar onChange={setDueDate} value={dueDate}/>
+            <Form.Check
+                type="checkbox"
+                id="is-repeat-check"
+                label="Repeat?"
+                checked={isRepeat}
+                onChange={updateRepeat}
+            />
+            {isRepeat && (
+              <Form.Group controlId="tasktype">
+                  <Form.Label>How often?</Form.Label>
+                  <Form.Select value={repeatType} onChange={updateRepeatType}>
+                    { REPEATTYPE.map((type) =>
+                      <option key={type} value={type}>{type}</option>
+                    )}
+                  </Form.Select>
+              </Form.Group>
+              )}
         </div>
       </div>
     </>
