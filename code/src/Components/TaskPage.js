@@ -243,7 +243,7 @@ function TaskPage() {
                       Edit Task
                     </Button>
                   </p>
-                  <Button onClick={setIsComplete(true)} style={{ top: "20%" }}>Done</Button>
+                  <Button style={{ top: "20%" }}>Done</Button>
                 </div>
               </Col>
             </div>
