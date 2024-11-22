@@ -413,93 +413,116 @@ function TaskPage() {
       </div>
       <div className="App-background">{}</div>
 
+      {/* Modal */}
       <div id="editTask" className="modal">
         <div className="modal-content">
-          <Button onClick={closeEditTask}>Close</Button>
-          <Form.Group controlId="formTitle" as={Row}>
-                <Form.Label column sm={2}>
-                    Title:
-                </Form.Label>
-                <Col>
-                    <Form.Control
-                        value={title}
-                        onChange={(
-                            event,
-                        ) => {
-                            setTitle(event.target.value);
-                        }}
-                    />
-                </Col>
+
+          {/* Modal Title */}
+          <div id="titleFrame" className="modalTitle">
+            <div className="modalHeader">
+              <div className="titleForm">
+                <Form.Group controlId="formTitle" as={Row}>
+                  <Form.Control
+                    value={title}
+                    placeholder="Task Name"
+                    onChange={(event) => setTitle(event.target.value)}
+                  />
+                </Form.Group>
+              </div>
+              <Button className="closeButton" onClick={closeEditTask}>
+                Close
+              </Button>
+            </div>
+          </div>
+
+          {/* Modal Content */}
+          <div className="modalContentFrame">
+            {/* Top Row */}
+            <Form.Group controlId="formDescription" style={{ gridColumn: "1", gridRow: "1" }}>
+              <Form.Label>Description:</Form.Label>
+              <Form.Control
+                size="lg"
+                as="textarea"
+                rows={3}
+                value={task}
+                onChange={(event) => setTask(event.target.value)}
+              />
             </Form.Group>
-            <Form.Group controlId="formDescription" as={Row}>
-                <Form.Label column sm={2}>
-                    Description:
-                </Form.Label>
-                <Col>
-                    <Form.Control
-                        size="lg"
-                        as="textarea"
-                        rows={5}
-                        cols={50}
-                        type="text"
-                        value={task}
-                        onChange={(
-                            event,
-                        ) => {
-                            setTask(event.target.value);
-                        }}
-                    />
-                </Col>
+
+            <Form.Group controlId="taskType" style={{ gridColumn: "2", gridRow: "1" }}>
+              <Form.Label>Task Type:</Form.Label>
+              <Form.Select value={type} onChange={updateType}>
+                {TASKTYPE.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </Form.Select>
             </Form.Group>
-            <Form.Group controlId="tasktype">
-                <Form.Label>Task Type:</Form.Label>
-                <Form.Select value={type} onChange={updateType}>
-                  { TASKTYPE.map((type) =>
-                    <option key={type} value={type}>{type}</option>
-                  )}
-                </Form.Select>
+
+            <Form.Group controlId="formDate" style={{ gridColumn: "3", gridRow: "1" }}>
+              <Form.Label>Date:</Form.Label>
+              <Form.Control
+                value={dueDate}
+                placeholder={Date.now()}
+                onChange={(event) => setDueDate(event.target.value)}
+              />
             </Form.Group>
-            <Form.Group controlId="formDate" as={Row}>
-                <Form.Label column sm={2}>
-                    Date:
-                </Form.Label>
-                <Col>
-                    <Form.Control
-                        value={dueDate.toString()}
-                    />
-                    <Form.Label column sm={2}>
-                        Time:
-                    </Form.Label>
-                    <Form.Select value={dueHour} onChange={setTimeHour}>
-                      { hours.map((dueHour) =>
-                        <option key={dueHour} value={dueHour}>{dueHour}</option>
-                      )}
-                    </Form.Select>
-                    <Form.Select value={dueMinute} onChange={setTimeMinute}>
-                      { minutes.map((dueMinute) =>
-                        <option key={dueMinute} value={dueMinute}>{dueMinute}</option>
-                      )}
-                    </Form.Select>
-                </Col>
-            </Form.Group>
-            <Calendar onChange={updateDueDate} value={dueDate}/>
-            <Form.Check
+
+            {/* Bottom Row */}
+            <Col>
+              <Form.Check
                 type="checkbox"
                 id="is-repeat-check"
                 label="Repeat?"
                 checked={isRepeat}
                 onChange={updateRepeat}
-            />
-            {isRepeat && (
-              <Form.Group controlId="tasktype">
-                  <Form.Label>How often?</Form.Label>
-                  <Form.Select value={repeatType} onChange={updateRepeatType}>
-                    { REPEATTYPE.map((type) =>
-                      <option key={type} value={type}>{type}</option>
-                    )}
-                  </Form.Select>
-              </Form.Group>
+                style={{ gridColumn: "1", gridRow: "2" }}
+              />
+              {isRepeat && (
+                <Form.Group controlId="tasktype">
+                    <Form.Label>How often?</Form.Label>
+                    <Form.Select value={repeatType} onChange={updateRepeatType}>
+                      { REPEATTYPE.map((type) =>
+                        <option key={type} value={type}>{type}</option>
+                      )}
+                    </Form.Select>
+                </Form.Group>
               )}
+            </Col>
+            
+
+            <div style={{ gridColumn: "2", gridRow: "2" }}>
+              <Form.Label>Time:</Form.Label>
+              <div className="timeDropdowns">
+                <Form.Select value={dueHour} onChange={setTimeHour}>
+                  {hours.map((hour) => (
+                    <option key={hour} value={hour}>
+                      {hour}
+                    </option>
+                  ))}
+                </Form.Select>
+                <Form.Select value={dueMinute} onChange={setTimeMinute}>
+                  {minutes.map((minute) => (
+                    <option key={minute} value={minute}>
+                      {minute}
+                    </option>
+                  ))}
+                </Form.Select>
+              </div>
+            </div>
+            <Calendar
+              onChange={setDueDate}
+              value={dueDate}
+              className="calendar"
+              style={{ gridColumn: "3", gridRow: "2" }}
+            />
+          </div>
+          {/* Modal Footer*/}
+          <div className="modalFooter">
+            <Button className="smallButton">Set Reminder</Button>
+            <Button className="largeButton">Submit</Button>
+          </div>
         </div>
       </div>
     </>
