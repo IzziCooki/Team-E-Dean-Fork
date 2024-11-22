@@ -12,15 +12,21 @@ import { useState } from "react";
 
 function AvatarPage() {
   const navigate = useNavigate();
+
+  // State to track which dropdown is currently visible (null = none visible)
   const [dropdownVisibleIndex, setDropdownVisibleIndex] = useState(null);
+
+  // State to track selected options for each dropdown
   const [selectedOptions, setSelectedOptions] = useState(
     Array(6).fill("None")
   );
 
+  // Toggles dropdown visibility for the selected index
  const toggleDropdown = (index) => {
     setDropdownVisibleIndex(dropdownVisibleIndex === index ? null : index);
   };
 
+  // Sets the selected option for a specific dropdown and closes it
   const selectOption = (index, option) => {
     const newOptions = [...selectedOptions];
     newOptions[index] = option;
@@ -28,6 +34,7 @@ function AvatarPage() {
     setDropdownVisibleIndex(null);
   };
 
+  // Closes the dropdown when clicking outside of it
   const closeDropdown = (e) => {
     if (!e.target.closest(".dropdown")) {
       setDropdownVisibleIndex(null);
@@ -41,6 +48,7 @@ function AvatarPage() {
     };
   }, []);
 
+  // Labels for each dropdown (order corresponds to dropdown buttons)
   const dropdownLabels = [
     "Background",
     "Skin Tone",
@@ -49,6 +57,7 @@ function AvatarPage() {
     "Hats",
     "Outfits",
   ];
+
   return (
     <>
       <div className="App">
@@ -57,6 +66,8 @@ function AvatarPage() {
           <img src={logo} className="App-logo" alt="logo" />
           <img src={logo2} className="App-logo2" alt="logo" />
           <div className="App-buttons">
+
+            {/* Button to navigate to the homepage*/}
             <Button
               onClick={() => {
                 navigate("/home");
@@ -66,6 +77,8 @@ function AvatarPage() {
             >
               Home
             </Button>
+          
+            {/* Button to navigate to the task page*/}
             <Button
               onClick={() => {
                 navigate("/task");
@@ -75,6 +88,8 @@ function AvatarPage() {
             >
               Tasks
             </Button>
+
+            {/* Button to sign out */}
             <Button
               onClick={() => {
                 navigate("/");
@@ -105,12 +120,14 @@ function AvatarPage() {
               borderRadius: "10px",
             }}
           >
+
             {/* Avatar Goes Here */}
             <div className="avatarPlaceHolder"> 
               <p>Avatar image here later</p>
             </div>
           </Col>
 
+          {/* Column that holds all informaiton for the customize avatar box */}
           <Col
             className="customizeAvatar"
             style={{
@@ -128,8 +145,8 @@ function AvatarPage() {
             }}>
 
 
-          {/* Dropdown Menu */}
-          <div
+            {/* Section Header */}
+            <div
             className="avatarHeader"
             style={{
                fontWeight: 700,
@@ -140,22 +157,22 @@ function AvatarPage() {
               <p>Customize Avatar</p>
               </div>
 
+            {/* Section Subheader */}
             <div className="avatarSubheader"
             style={{
               textAlign: "left",
-              // border: "2px solid lightgray",
               marginBottom: "5%",
             }}>
               Avatar Subheading
             </div>
 
-           {/* Grid Layout for Dropdowns */}
+           {/* Dropdown grid for Avatar Customization */}
            <div
               className="dropdown-grid"
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)", // 3 columns
-                gridGap: "2em", // spacing between dropdowns
+                gridTemplateColumns: "repeat(3, 1fr)", //estabishes 3 columns
+                gridGap: "2em",
               }}
             >
               {selectedOptions.map((option, index) => (
@@ -164,12 +181,11 @@ function AvatarPage() {
                   className="dropdown"
                   style={{
                     position: "relative",
-                    // border: "1px solid dimgray",
                     padding: "10px",
                   }}
                 >
 
-                {/* Label */}
+                {/* Label for Each Dropdown */}
                 <p
                   style={{
                     marginBottom: "5px",
@@ -180,6 +196,7 @@ function AvatarPage() {
                   {dropdownLabels[index]}
                 </p>
 
+                  {/* Actual Dropdown Button */}
                   <button
                     className="dropbtn"
                     style={{
@@ -196,6 +213,8 @@ function AvatarPage() {
                   >
                     {option}
                   </button>
+
+                  {/* Content of the Dropdown Menus */}
                   {dropdownVisibleIndex === index && (
                     <div
                       className="dropdown-content"
@@ -234,6 +253,8 @@ function AvatarPage() {
           </Col>
         </div>
       </div>
+
+      {/* Bottom of the App */}
       <div className="App-bottom">
         <p>© F2024 - Ethernet, Inc. All rights reserved. Address Address</p>
       </div>
