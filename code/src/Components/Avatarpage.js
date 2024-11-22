@@ -103,19 +103,26 @@ function AvatarPage() {
         </header>
         <div>
 
-
+        <div
+          className="avatar-container"
+          style={{
+            display: "flex", 
+            alignItems: "stretch", 
+            position: "absolute",
+            top: "15%",
+            left: "5%",
+            right: "5%", 
+            height: "70%", 
+            gap: "5%", 
+          }}
+        >
           {/* Avatar Display column */}
           <Col
             className="avatarCol"
             style={{
-              position: "fixed",
-              display: "flex",
-              top: "15%",
-              left: "5%",
-              width: "30%",
-              height: "70%",
+              flex: "1", 
               backgroundColor: "white",
-              opacity: .8,
+              opacity: 0.8,
               border: "2px solid lightgray",
               borderRadius: "10px",
             }}
@@ -131,17 +138,13 @@ function AvatarPage() {
           <Col
             className="customizeAvatar"
             style={{
-              position: "absolute",
-              display: "block",
-              top: "15%",
-              left: "40%",
-              width: "55%",
-              height: "62.5%",
+              flex: "2", // takes double the space compared to the avatar display column
               backgroundColor: "white",
-              opacity: .8,
+              opacity: 0.8,
               border: "2px solid lightgray",
               borderRadius: "10px",
-              padding: "20px",
+              padding: "1em",
+              
             }}>
 
 
@@ -150,9 +153,10 @@ function AvatarPage() {
             className="avatarHeader"
             style={{
                fontWeight: 700,
-              //  border: "2px solid lightgray",
                textAlign: "left",
-               height: "10%",
+               height: "5%",
+               marginTop: '3%',
+               marginLeft: '3%',
             }}>
               <p>Customize Avatar</p>
               </div>
@@ -161,9 +165,12 @@ function AvatarPage() {
             <div className="avatarSubheader"
             style={{
               textAlign: "left",
+              marginTop: '.5em',
               marginBottom: "5%",
+              marginLeft: '3%',
+              color: "dimgray",
             }}>
-              Avatar Subheading
+              Subheading
             </div>
 
            {/* Dropdown grid for Avatar Customization */}
@@ -208,6 +215,7 @@ function AvatarPage() {
                       border: "1px solid dimgray",
                       width: "100%",
                       textAlign: "left",
+                      marginBottom: "8%",
                     }}
                     onClick={() => toggleDropdown(index)}
                   >
@@ -255,7 +263,7 @@ function AvatarPage() {
           </Col>
         </div>
       </div>
-
+</div>
       {/* Bottom of the App */}
       <div className="App-bottom">
         <p>© F2024 - Ethernet, Inc. All rights reserved. Address Address</p>
