@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 //import * as Separator from "@radix-ui/react-separator";
 import "./../App.css";
 import { useState } from "react";
-
+import { FaChevronDown } from 'react-icons/fa';
 
 function AvatarPage() {
   const navigate = useNavigate();
@@ -217,6 +217,9 @@ function AvatarPage() {
                   <button
                     className="dropbtn"
                     style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
                       backgroundColor: "white",
                       color: "black",
                       padding: "5px 20px",
@@ -230,6 +233,7 @@ function AvatarPage() {
                     onClick={() => toggleDropdown(index)}
                   >
                     {option}
+                    <FaChevronDown />
                   </button>
 
                   {/* Content of the Dropdown Menus */}
