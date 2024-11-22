@@ -10,17 +10,27 @@ import "./../App.css";
 import { useState } from "react";
 
 
-function App() {
+function AvatarPage() {
   const navigate = useNavigate();
-  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [dropdownVisibleIndex, setDropdownVisibleIndex] = useState(null);
+  const [selectedOptions, setSelectedOptions] = useState(
+    Array(6).fill("None")
+  );
 
-  const toggleDropdown = () => {
-    setDropdownVisible((prevState) => !prevState);
+ const toggleDropdown = (index) => {
+    setDropdownVisibleIndex(dropdownVisibleIndex === index ? null : index);
+  };
+
+  const selectOption = (index, option) => {
+    const newOptions = [...selectedOptions];
+    newOptions[index] = option;
+    setSelectedOptions(newOptions);
+    setDropdownVisibleIndex(null);
   };
 
   const closeDropdown = (e) => {
     if (!e.target.closest(".dropdown")) {
-      setDropdownVisible(false);
+      setDropdownVisibleIndex(null);
     }
   };
 
@@ -31,7 +41,14 @@ function App() {
     };
   }, []);
 
-
+  const dropdownLabels = [
+    "Background",
+    "Skin Tone",
+    "Eye Color",
+    "Hair",
+    "Hats",
+    "Outfits",
+  ];
   return (
     <>
       <div className="App">
@@ -76,7 +93,7 @@ function App() {
           <Col
             className="avatarCol"
             style={{
-              position: "absolute",
+              position: "fixed",
               display: "flex",
               top: "15%",
               left: "5%",
@@ -98,18 +115,16 @@ function App() {
             className="customizeAvatar"
             style={{
               position: "absolute",
-              display: "flex",
+              display: "block",
               top: "15%",
               left: "40%",
               width: "55%",
-              height: "70%",
+              height: "62.5%",
               backgroundColor: "white",
               opacity: .8,
               border: "2px solid lightgray",
               borderRadius: "10px",
-              // justifyContent: 'space-evenly',
-              // alignContent: "space-evenly",
-              padding: 0,
+              padding: "20px",
             }}>
 
 
@@ -117,72 +132,106 @@ function App() {
           <div
             className="avatarHeader"
             style={{
-               paddingLeft: "1em",
                fontWeight: 700,
-               border: "2px solid lightgray",
-               height: '10%',
+              //  border: "2px solid lightgray",
+               textAlign: "left",
+               height: "10%",
             }}>
-
               <p>Customize Avatar</p>
               </div>
 
             <div className="avatarSubheader"
             style={{
-              marginTop: "5%",
-              marginLeft: -133,
-              border: "2px solid lightgray",
-              height: "5%",
+              textAlign: "left",
+              // border: "2px solid lightgray",
+              marginBottom: "5%",
             }}>
               Avatar Subheading
             </div>
 
-            <div
-              className="dropdown"
+           {/* Grid Layout for Dropdowns */}
+           <div
+              className="dropdown-grid"
               style={{
-                position: "relative",
-                margin: "1em auto",
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)", // 3 columns
+                gridGap: "2em", // spacing between dropdowns
               }}
             >
-              <button
-                className="dropbtn"
-                style={{
-                  backgroundColor: "white",
-                  color: "black",
-                  padding: "10px 20px",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  border: "1px solid dimgray",
-                  width: "150px"
-                }}
-                onClick={toggleDropdown}
-              >
-                Value 
-              </button>
-              {dropdownVisible && (
+              {selectedOptions.map((option, index) => (
                 <div
-                  className="dropdown-content"
+                  key={index}
+                  className="dropdown"
                   style={{
-                    position: "absolute",
-                    backgroundColor: "white",
-                    border: "1px solid dimgray",
-                    borderRadius: "5px",
-                    width: "150px",
-                    //top: "100%",
-                    left: "0",
-                    opacity: 0.8,
-                    zIndex: 1,
-                    maxHeight: "40px",
-                    overflowY: 'auto',
+                    position: "relative",
+                    // border: "1px solid dimgray",
+                    padding: "10px",
                   }}
                 >
-                  <p style={{ padding: "10px", margin: 0 }}>Option 1</p>
-                  <p style={{ padding: "10px", margin: 0 }}>Option 2</p>
-                  <p style={{ padding: "10px", margin: 0 }}>Option 3</p>
+
+                {/* Label */}
+                <p
+                  style={{
+                    marginBottom: "5px",
+                    fontWeight: 300,
+                    textAlign: "left",
+                  }}
+                >
+                  {dropdownLabels[index]}
+                </p>
+
+                  <button
+                    className="dropbtn"
+                    style={{
+                      backgroundColor: "white",
+                      color: "black",
+                      padding: "5px 20px",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      border: "1px solid dimgray",
+                      width: "100%",
+                      textAlign: "left",
+                    }}
+                    onClick={() => toggleDropdown(index)}
+                  >
+                    {option}
+                  </button>
+                  {dropdownVisibleIndex === index && (
+                    <div
+                      className="dropdown-content"
+                      style={{
+                        position: "absolute",
+                        top: "100%",
+                        left: 0,
+                        backgroundColor: "white",
+                        border: "1px solid dimgray",
+                        borderRadius: "5px",
+                        width: "100%",
+                        zIndex: 10,
+                        opacity: 0.95,
+                      }}
+                    >
+                      {["Option 1", "Option 2", "Option 3", "None"].map(
+                        (opt, idx) => (
+                          <p
+                            key={idx}
+                            style={{
+                              padding: "5px",
+                              margin: 0,
+                              cursor: "pointer",
+                            }}
+                            onClick={() => selectOption(index, opt)}
+                          >
+                            {opt}
+                          </p>
+                        )
+                      )}
+                    </div>
+                  )}
                 </div>
-              )}
+              ))}
             </div>
           </Col>
-
         </div>
       </div>
       <div className="App-bottom">
@@ -191,6 +240,6 @@ function App() {
       <div className="App-background">{}</div>
     </>
   );
-}
+};
 
-export default App;
+export default AvatarPage;

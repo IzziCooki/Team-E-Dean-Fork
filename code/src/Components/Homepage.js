@@ -13,7 +13,7 @@ import { db } from "./firebase";
 import { doc, getDoc } from 'firebase/firestore';
 
 
-function App() {
+function HomePage() {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
 
@@ -267,4 +267,4 @@ function App() {
   );
 }
 
-export default App;
+export default HomePage;
