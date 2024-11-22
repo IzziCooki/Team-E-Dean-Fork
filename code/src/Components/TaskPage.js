@@ -487,22 +487,23 @@ function TaskPage() {
 
             <div style={{ gridColumn: "2", gridRow: "2" }}>
               <Form.Label>Time:</Form.Label>
-              <Form.Select value={dueHour} onChange={setTimeHour}>
-                {hours.map((hour) => (
-                  <option key={hour} value={hour}>
-                    {hour}
-                  </option>
-                ))}
-              </Form.Select>
-              <Form.Select value={dueMinute} onChange={setTimeMinute}>
-                {minutes.map((minute) => (
-                  <option key={minute} value={minute}>
-                    {minute}
-                  </option>
-                ))}
-              </Form.Select>
+              <div className="timeDropdowns">
+                <Form.Select value={dueHour} onChange={setTimeHour}>
+                  {hours.map((hour) => (
+                    <option key={hour} value={hour}>
+                      {hour}
+                    </option>
+                  ))}
+                </Form.Select>
+                <Form.Select value={dueMinute} onChange={setTimeMinute}>
+                  {minutes.map((minute) => (
+                    <option key={minute} value={minute}>
+                      {minute}
+                    </option>
+                  ))}
+                </Form.Select>
+              </div>
             </div>
-
             <Calendar
               onChange={setDueDate}
               value={dueDate}

@@ -302,6 +302,15 @@
   width: 100%; 
 }
 
+.timeDropdowns {
+  display: flex;
+  gap: 10px;
+}
+
+.timeDropdowns select {
+  flex: 1; 
+}
+
 .modalContentFrame .calendar {
   width: 100%;
   max-width: 300px;
