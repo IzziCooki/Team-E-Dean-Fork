@@ -42,28 +42,33 @@ function TaskPage() {
   }
 
   function updateRepeatType(event) {
-    setRepeatType(event.target.checked);
+    setRepeatType(event.target.value);
   }
 
+  function updateDueDate(event) {
+    let newDueDate = new Date(event)
+    newDueDate.setHours(dueDate.getHours(), dueDate.getMinutes())
+    setDueDate(newDueDate)
+  }
   function updateHour(event) {
-    setDueHour(event.target.checked);
+    setDueHour(event.target.value);
   }
 
   function updateMinute(event) {
-    setDueMinute(event.target.checked);
+    setDueMinute(event.target.value);
   }
 
   function setTimeHour(event) { //these 2 set time functions are currently bugged and do not work
     updateHour(event)
-    let newDueDate = new Date()
-    newDueDate = dueDate.setHours(dueHour,dueMinute,0)
+    let newDueDate = new Date(dueDate)
+    newDueDate.setHours(event.target.value)
     setDueDate(newDueDate)
   }
 
   function setTimeMinute(event) {
     updateMinute(event)
-    let newDueDate = new Date()
-    newDueDate = dueDate.setHours(dueHour,dueMinute,0)
+    let newDueDate = new Date(dueDate)
+    newDueDate.setMinutes(event.target.value)
     setDueDate(newDueDate)
   }
   
@@ -458,27 +463,24 @@ function TaskPage() {
                 </Form.Label>
                 <Col>
                     <Form.Control
-                        value={dueDate}
-                        placeholder={Date.now()}
-                        onChange={(
-                            event,
-                        ) => {
-                            setDueDate(event.target.value);
-                        }}
+                        value={dueDate.toString()}
                     />
+                    <Form.Label column sm={2}>
+                        Time:
+                    </Form.Label>
                     <Form.Select value={dueHour} onChange={setTimeHour}>
-                      { hours.map((type) =>
-                        <option key={type} value={type}>{type}</option>
+                      { hours.map((dueHour) =>
+                        <option key={dueHour} value={dueHour}>{dueHour}</option>
                       )}
                     </Form.Select>
                     <Form.Select value={dueMinute} onChange={setTimeMinute}>
-                      { minutes.map((type) =>
-                        <option key={type} value={type}>{type}</option>
+                      { minutes.map((dueMinute) =>
+                        <option key={dueMinute} value={dueMinute}>{dueMinute}</option>
                       )}
                     </Form.Select>
                 </Col>
             </Form.Group>
-            <Calendar onChange={setDueDate} value={dueDate}/>
+            <Calendar onChange={updateDueDate} value={dueDate}/>
             <Form.Check
                 type="checkbox"
                 id="is-repeat-check"
