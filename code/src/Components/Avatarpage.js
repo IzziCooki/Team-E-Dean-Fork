@@ -221,13 +221,15 @@ function AvatarPage() {
                       style={{
                         position: "absolute",
                         top: "100%",
-                        left: 0,
+                        left: "5%",
                         backgroundColor: "white",
                         border: "1px solid dimgray",
                         borderRadius: "5px",
-                        width: "100%",
+                        width: "90%",
                         zIndex: 10,
-                        opacity: 0.95,
+                        opacity: 0.8,
+                        overflowY: 'auto',
+                        maxHeight: "30px",
                       }}
                     >
                       {["Option 1", "Option 2", "Option 3", "None"].map(
