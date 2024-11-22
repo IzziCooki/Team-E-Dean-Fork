@@ -64,7 +64,7 @@ function AvatarPage() {
     ["Fair", "Tan", "Dark", "None"],  
     ["Blue", "Brown", "Green", "None"], 
     ["Blonde", "Brown", "Black", "None"], 
-    ["Top Hat", "Baseball Cap", "Tiara", "None"], 
+    ["Top Hat", "Gnome Hat", "Tiara", "None"], 
     ["smth", "smth", "smth", "None"], 
   ];
   
