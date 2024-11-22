@@ -203,6 +203,7 @@
   color: #61dafb;
 }
 
+/* Task Modal */
 .modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
@@ -218,14 +219,139 @@
   margin: 0% auto; /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid black;
-  width: 50%;
+  border-radius: var(--Radius-200, 8px);
+  width: 70%;
   height: 80%;
   bottom: 28%;
   top: 0;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   animation-name: animatetop;
   animation-duration: 0.4s;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 100px 146px;
+  flex-wrap: wrap;
 }
+
+/* Modal Title/Top Row */
+.modalTitle {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-top: 0px;
+  padding-bottom: 30px;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.titleForm {
+  color: #283618;
+  flex-grow: 1;
+  margin-top: 30px;
+}
+
+.titleForm input {
+  text-transform: capitalize;
+}
+
+.titleForm .form-control {
+  font-size: 1.2rem;
+  height: 24px;
+  padding: 10px;
+  border: none;
+  border-bottom: 2px solid #283618;
+  border-radius: 0;
+  outline: none;
+  transition: border-bottom-color 0.3s ease;
+}
+
+.titleForm .form-control:focus {
+  border-bottom-color: #007bff;
+  box-shadow: none;
+}
+
+.closeButton {
+  align-self: flex-start;
+}
+
+/* Modal Main Content */
+.modalContentFrame {
+  align-self: center;
+  display: grid; 
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 100px 40px;
+  justify-content: center; 
+  align-items: center;
+  width: 85%;
+  padding: 20px 50px;
+}
+
+.modalContentFrame .form-group {
+  width: 100%;
+  max-width: 300px;
+}
+
+.modalContentFrame .form-control, 
+.modalContentFrame .form-select {
+  width: 100%; 
+}
+
+.modalContentFrame .calendar {
+  width: 100%;
+  max-width: 300px;
+  height: auto; /* Maintain aspect ratio */
+  justify-self: center; /* Center the calendar horizontally */
+  grid-column: 3; /* Place in the third column */
+  grid-row: 2; /* Place in the second row */
+}
+
+.calendar table {
+  width: 100%;
+  height: 100%;
+}
+
+.calendar button {
+  font-size: 0.8rem;
+}
+
+.modalFooter {
+  display: flex; /* Use Flexbox for horizontal alignment */
+  justify-content: space-between; /* Push items to the left and right */
+  align-items: center; /* Vertically center items */
+  width: 98%; /* Full-width footer */
+  padding: 100px 20px; /* Add some padding for spacing */
+}
+
+.modalFooter .smallButton {
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  background: #ffffff;
+  border: none;
+  border-bottom: 2px solid #B2B2B2;
+  border-radius: 0;
+  outline: none;
+  transition: border-bottom-color 0.3s ease;
+}
+
+.modalFooter .smallButton:focus {
+  border-bottom-color: #007bff;
+  box-shadow: none;
+}
+
+.modalFooter .largeButton {
+  color: white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: var(--Radius-100, 4px);
+  background: #283618;
+}
+
 
 @keyframes App-logo-spin {
   from {
