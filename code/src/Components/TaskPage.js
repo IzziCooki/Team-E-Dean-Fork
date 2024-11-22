@@ -6,7 +6,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from './firebase';
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-//import { editTask } from './TaskLogic' //not yet implemented
+import { editTask } from './TaskLogic' //not yet implemented
 import Calendar from 'react-calendar'
 import "./../App.css";
 
@@ -20,11 +20,12 @@ function TaskPage() {
   const [dueMinute, setDueMinute] = useState(0);
   const [isRepeat, setIsRepeat] = useState(false);
   const [repeatType, setRepeatType] = useState("");
-  //const [isComplete, setIsComplete] = useState(false); //not yet implemented
+  const [isComplete, setIsComplete] = useState(false); //not yet implemented
   const TASKTYPE = ["Healthy Eating", "Rest", "Knowledge", "Social", "Tidyness", "Mental"]
   const REPEATTYPE = ["Daily", "Weekly", "Bi-Weekly", "Monthly"]
   const hours = [];
   const minutes = [];
+  const tasks = [];
 
   for (let i = 0; i < 24; i++) {
     hours.push(i);
@@ -58,7 +59,7 @@ function TaskPage() {
     setDueMinute(event.target.value);
   }
 
-  function setTimeHour(event) { //these 2 set time functions are currently bugged and do not work
+  function setTimeHour(event) { 
     updateHour(event)
     let newDueDate = new Date(dueDate)
     newDueDate.setHours(event.target.value)
@@ -86,6 +87,7 @@ function TaskPage() {
     if (modal) {
       modal.style.display = "none";
     }
+    tasks.push(editTask(title, task, type, dueDate, isRepeat, isComplete))
   };
 
   useEffect(()=>{
@@ -241,7 +243,7 @@ function TaskPage() {
                       Edit Task
                     </Button>
                   </p>
-                  <Button style={{ top: "20%" }}>Done</Button>
+                  <Button onClick={setIsComplete(true)} style={{ top: "20%" }}>Done</Button>
                 </div>
               </Col>
             </div>
