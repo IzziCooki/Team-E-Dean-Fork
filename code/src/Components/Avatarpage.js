@@ -48,7 +48,7 @@ function AvatarPage() {
     };
   }, []);
 
-  // Labels for each dropdown (order corresponds to dropdown buttons)
+  //labels for each dropdown (order corresponds to dropdown buttons)
   const dropdownLabels = [
     "Background",
     "Skin Tone",
@@ -57,6 +57,17 @@ function AvatarPage() {
     "Hats",
     "Outfits",
   ];
+
+  //temporary dropdown values
+  const dropdownOptions = [
+    ["hearts", "stars", "smth", "None"],
+    ["Fair", "Tan", "Dark", "None"],  
+    ["Blue", "Brown", "Green", "None"], 
+    ["Blonde", "Brown", "Black", "None"], 
+    ["Top Hat", "Baseball Cap", "Tiara", "None"], 
+    ["smth", "smth", "smth", "None"], 
+  ];
+  
 
   return (
     <>
@@ -124,7 +135,6 @@ function AvatarPage() {
               backgroundColor: "white",
               opacity: 0.8,
               border: "2px solid lightgray",
-              borderRadius: "10px",
             }}
           >
 
@@ -228,7 +238,7 @@ function AvatarPage() {
                       className="dropdown-content"
                       style={{
                         position: "absolute",
-                        top: "100%",
+                        top: "80%",
                         left: "5%",
                         backgroundColor: "white",
                         border: "1px solid dimgray",
@@ -237,24 +247,22 @@ function AvatarPage() {
                         zIndex: 10,
                         opacity: 0.8,
                         overflowY: 'auto',
-                        maxHeight: "30px",
+                        maxHeight: "60px",
                       }}
                     >
-                      {["Option 1", "Option 2", "Option 3", "None"].map(
-                        (opt, idx) => (
-                          <p
-                            key={idx}
-                            style={{
-                              padding: "5px",
-                              margin: 0,
-                              cursor: "pointer",
-                            }}
-                            onClick={() => selectOption(index, opt)}
-                          >
-                            {opt}
-                          </p>
-                        )
-                      )}
+                    {dropdownOptions[index].map((opt, idx) => (
+                      <p
+                        key={idx}
+                        style={{
+                          padding: "5px",
+                          margin: 0,
+                          cursor: "pointer",
+                        }}
+                        onClick={() => selectOption(index, opt)}
+                      >
+                        {opt}
+                      </p>
+                    ))}
                     </div>
                   )}
                 </div>
