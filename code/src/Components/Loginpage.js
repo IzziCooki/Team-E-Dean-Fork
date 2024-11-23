@@ -1,43 +1,16 @@
-import React, {useState} from "react";
+import React from "react";
 import logo from "./../logo.svg";
 import logo2 from "./../logo2.svg";
 import { Button, Col } from "react-bootstrap";
-//import { Link } from 'react-router-dom'; //might be useful later
-import {NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom"; // Add `useNavigate`
 import "./../App.css";
-import {  signInWithEmailAndPassword   } from 'firebase/auth';
-import { auth } from './firebase.js';
-
-
-
-
+import useLoginAuth from "../Hooks/useLoginAuth";
 const Login = () => {
-    const navigate = useNavigate();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-
-    const onLogin = (e) => {
-        e.preventDefault();
-        signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            // Signed in
-            const user = userCredential.user;
-            navigate("/home")
-            console.log(user);
-        })
-        .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.log(errorCode, errorMessage)
-            console.log("Not Working")
-
-        });
-
-    }
-
+  const { setEmail, setPassword, onLogin } = useLoginAuth();
+  const navigate = useNavigate(); // Define `navigate`
 
   return (
-     <>
+    <>
       <div className="App">
         <header className="App-header2"></header>
         <header className="App-header">
@@ -45,9 +18,7 @@ const Login = () => {
           <img src={logo2} className="App-logo2" alt="logo" />
           <div className="App-buttons">
             <Button
-              onClick={() => {
-                navigate("/register");
-              }}
+              onClick={() => navigate("/register")} // Use `navigate` here
               variant="primary"
               size="small"
             >
@@ -63,73 +34,57 @@ const Login = () => {
       <div className="App-panel">
         <Col>
           <div className="Column 1" style={{ width: "85%", height: "90%" }}>
-            <img
-              src={logo2}
-              className="App-logo3"
-              alt="logo"
-              object-fit="fill"
-            />
+            <img src={logo2} className="App-logo3" alt="logo" />
           </div>
         </Col>
         <Col>
-          <main >        
-        <section>
-            <div>
-                <div>                  
-                    <h1>  </h1>                                                                            
-                    <form>                                                                                            
-                        <div>
-                            <label htmlFor="email-address">
-                                Email address
-                            </label>
-                            <input
-                                    id="email-address"
-                                    name="email"
-                                    type="email"                                    
-                                    required                                                                                
-                                    placeholder=""
-                                    onChange={(e)=>setEmail(e.target.value)}                              
-                            />
-                        </div>
+          <main>
+            <section>
+              <div>
+                <div>
+                  <form>
+                    <div>
+                      <label htmlFor="email-address">Email address</label>
+                      <input
+                        id="email-address"
+                        name="email"
+                        type="email"
+                        required
+                        placeholder=""
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </div>
 
-                        <div>
-                            <label htmlFor="password">
-                                Password
-                            </label>
-                            <input
-                                    id="password"
-                                    name="password"
-                                    type="password"                                    
-                                    required                                                                                
-                                    placeholder=""
-                                    onChange={(e)=>setPassword(e.target.value)}            
-                            />
-                        </div>                                             
+                    <div>
+                      <label htmlFor="password">Password</label>
+                      <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        required
+                        placeholder=""
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </div>
 
-                        <button
-                            type="submit" 
-                            onClick={onLogin}                        
-                        >  
-                            Login                              
-                        </button>
+                    <button type="submit" onClick={onLogin}>
+                      Login
+                    </button>
+                  </form>
 
-                    </form>
-
-                    <p>
-                        Don't have an account?{' '}
-                        <NavLink to="/register" >
-                            Sign Up
-                        </NavLink>
-                    </p>                   
+                  <p>
+                    Don't have an account?{" "}
+                    <NavLink to="/register">Sign Up</NavLink>
+                  </p>
                 </div>
-            </div>
-        </section>
-    </main>
+              </div>
+            </section>
+          </main>
         </Col>
       </div>
-      <div className="App-background">{}</div>
+      <div className="App-background"></div>
     </>
-  )
-}
+  );
+};
 
 export default Login;
