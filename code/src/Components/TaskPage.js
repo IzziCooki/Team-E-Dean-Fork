@@ -172,17 +172,6 @@ function TaskPage() {
     }
   };
 
-  const dummyTasks = [
-    editTask(
-      "Apple",
-      "Eat an apple a day",
-      "Healthy Eating",
-      "November 10",
-      "Daily"
-    ),
-    editTask("Walk", "Go for a walk", "Mental", "December 12", "Daily"),
-  ];
-
   const currentDate = new Date();
   const monthName = currentDate.toLocaleString("default", { month: "long" });
 
