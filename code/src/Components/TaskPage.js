@@ -14,18 +14,18 @@ function TaskPage() {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [task, setTask] = useState("");
-  const [type, setType] = useState("");
+  const [type, setType] = useState("Healthy Eating");
   const [dueDate, setDueDate] = useState(new Date());
   const [dueHour, setDueHour] = useState(0);
   const [dueMinute, setDueMinute] = useState(0);
   const [isRepeat, setIsRepeat] = useState(false);
   const [repeatType, setRepeatType] = useState("");
-  const [isComplete, setIsComplete] = useState(false); //not yet implemented
+  const [tasks, setTasks] = useState([]);
+  //const [isComplete, setIsComplete] = useState(false); //not yet implemented
   const TASKTYPE = ["Healthy Eating", "Rest", "Knowledge", "Social", "Tidyness", "Mental"]
   const REPEATTYPE = ["Daily", "Weekly", "Bi-Weekly", "Monthly"]
   const hours = [];
   const minutes = [];
-  const tasks = [];
 
   for (let i = 0; i < 24; i++) {
     hours.push(i);
@@ -72,6 +72,11 @@ function TaskPage() {
     newDueDate.setMinutes(event.target.value)
     setDueDate(newDueDate)
   }
+
+  function updateTasks(task) {
+    const newTasks = [...tasks, task]
+    setTasks(newTasks)
+  }
   
   // Function to open the modal
   const openEditTask = () => {
@@ -81,14 +86,40 @@ function TaskPage() {
     }
   };
 
-  // Function to close the modal
+  // Function to close the modal on close
   const closeEditTask = () => {
     const modal = document.getElementById("editTask");
     if (modal) {
       modal.style.display = "none";
     }
-    tasks.push(editTask(title, task, type, dueDate, isRepeat, isComplete))
+    setTitle("");
+    setTask("");
+    setType("");
+    setDueDate(new Date());
+    setDueHour(0);
+    setDueMinute(0);
+    setIsRepeat(false);
+    setRepeatType("");
   };
+
+  // Function to close the modal on close on submit
+  const submitTask = () => {
+    const modal = document.getElementById("editTask");
+    if (modal) {
+      modal.style.display = "none";
+    }
+    let newTask = editTask(title,task,type,dueDate,isRepeat);
+    updateTasks(newTask);
+    setTitle("");
+    setTask("");
+    setType("");
+    setDueDate(new Date());
+    setDueHour(0);
+    setDueMinute(0);
+    setIsRepeat(false);
+    setRepeatType("");
+  };
+  
 
   useEffect(()=>{
     onAuthStateChanged(auth, (user) => {
@@ -306,6 +337,7 @@ function TaskPage() {
           </div>
           <Button
             id="newTaskButton"
+            data-testid="newTaskButton"
             onClick={openEditTask}
             style={{
               marginTop: "2%",
@@ -414,7 +446,7 @@ function TaskPage() {
       <div className="App-background">{}</div>
 
       {/* Modal */}
-      <div id="editTask" className="modal">
+      <div id="editTask" data-testid="editTask" className="modal">
         <div className="modal-content">
 
           {/* Modal Title */}
@@ -463,9 +495,7 @@ function TaskPage() {
             <Form.Group controlId="formDate" style={{ gridColumn: "3", gridRow: "1" }}>
               <Form.Label>Date:</Form.Label>
               <Form.Control
-                value={dueDate}
-                placeholder={Date.now()}
-                onChange={(event) => setDueDate(event.target.value)}
+                value={dueDate.toString()}
               />
             </Form.Group>
 
@@ -512,7 +542,7 @@ function TaskPage() {
               </div>
             </div>
             <Calendar
-              onChange={setDueDate}
+              onChange={updateDueDate}
               value={dueDate}
               className="calendar"
               style={{ gridColumn: "3", gridRow: "2" }}
@@ -521,7 +551,7 @@ function TaskPage() {
           {/* Modal Footer*/}
           <div className="modalFooter">
             <Button className="smallButton">Set Reminder</Button>
-            <Button className="largeButton">Submit</Button>
+            <Button onClick={submitTask} className="largeButton">Submit</Button>
           </div>
         </div>
       </div>
