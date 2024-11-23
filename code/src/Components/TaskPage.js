@@ -1,13 +1,14 @@
-import React, {useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "./../logo.svg";
 import logo2 from "./../logo2.svg";
 import Award from "./../Award.svg";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from './firebase';
+import { auth } from "./firebase";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { editTask } from './TaskLogic' //not yet implemented
-import Calendar from 'react-calendar'
+import { editTask } from "./TaskLogic"; //not yet implemented
+import Calendar from "react-calendar";
+import "react-calendar/dist/cjs";
 import "./../App.css";
 
 function TaskPage() {
@@ -22,8 +23,15 @@ function TaskPage() {
   const [repeatType, setRepeatType] = useState("");
   const [tasks, setTasks] = useState([]);
   //const [isComplete, setIsComplete] = useState(false); //not yet implemented
-  const TASKTYPE = ["Healthy Eating", "Rest", "Knowledge", "Social", "Tidyness", "Mental"]
-  const REPEATTYPE = ["Daily", "Weekly", "Bi-Weekly", "Monthly"]
+  const TASKTYPE = [
+    "Healthy Eating",
+    "Rest",
+    "Knowledge",
+    "Social",
+    "Tidyness",
+    "Mental",
+  ];
+  const REPEATTYPE = ["Daily", "Weekly", "Bi-Weekly", "Monthly"];
   const hours = [];
   const minutes = [];
 
@@ -47,9 +55,9 @@ function TaskPage() {
   }
 
   function updateDueDate(event) {
-    let newDueDate = new Date(event)
-    newDueDate.setHours(dueDate.getHours(), dueDate.getMinutes())
-    setDueDate(newDueDate)
+    let newDueDate = new Date(event);
+    newDueDate.setHours(dueDate.getHours(), dueDate.getMinutes());
+    setDueDate(newDueDate);
   }
   function updateHour(event) {
     setDueHour(event.target.value);
@@ -59,25 +67,25 @@ function TaskPage() {
     setDueMinute(event.target.value);
   }
 
-  function setTimeHour(event) { 
-    updateHour(event)
-    let newDueDate = new Date(dueDate)
-    newDueDate.setHours(event.target.value)
-    setDueDate(newDueDate)
+  function setTimeHour(event) {
+    updateHour(event);
+    let newDueDate = new Date(dueDate);
+    newDueDate.setHours(event.target.value);
+    setDueDate(newDueDate);
   }
 
   function setTimeMinute(event) {
-    updateMinute(event)
-    let newDueDate = new Date(dueDate)
-    newDueDate.setMinutes(event.target.value)
-    setDueDate(newDueDate)
+    updateMinute(event);
+    let newDueDate = new Date(dueDate);
+    newDueDate.setMinutes(event.target.value);
+    setDueDate(newDueDate);
   }
 
   function updateTasks(task) {
-    const newTasks = [...tasks, task]
-    setTasks(newTasks)
+    const newTasks = [...tasks, task];
+    setTasks(newTasks);
   }
-  
+
   // Function to open the modal
   const openEditTask = () => {
     const modal = document.getElementById("editTask");
@@ -94,7 +102,7 @@ function TaskPage() {
     }
     setTitle("");
     setTask("");
-    setType("");
+    setType("Healthy Eating");
     setDueDate(new Date());
     setDueHour(0);
     setDueMinute(0);
@@ -108,7 +116,7 @@ function TaskPage() {
     if (modal) {
       modal.style.display = "none";
     }
-    let newTask = editTask(title,task,type,dueDate,isRepeat);
+    let newTask = editTask(title, task, type, dueDate, isRepeat);
     updateTasks(newTask);
     setTitle("");
     setTask("");
@@ -119,41 +127,64 @@ function TaskPage() {
     setIsRepeat(false);
     setRepeatType("");
   };
-  
 
-  useEffect(()=>{
+  useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      
-        if (user) {
-          // User is signed in, see docs for a list of available properties
-          // https://firebase.google.com/docs/reference/js/firebase.User
-          const uid = user.uid;
-          const email = user.email;
-          // ...
-          console.log("uid", uid)
-          console.log("email", email)
-
-
-        } else {
-          // User is signed out
-          // ...
-          console.log("user is logged out")
-          navigate("/");
-          
-        }
-      });
-
-},)
-
-  const handleLogout = () => {               
-    signOut(auth).then(() => {
-    // Sign-out successful.
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        const uid = user.uid;
+        const email = user.email;
+        // ...
+        console.log("uid", uid);
+        console.log("email", email);
+      } else {
+        // User is signed out
+        // ...
+        console.log("user is logged out");
         navigate("/");
-        console.log("Signed out successfully")
-    }).catch((error) => {
-    // An error happened.
+      }
     });
-  }
+  });
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        // Sign-out successful.
+        navigate("/");
+        console.log("Signed out successfully");
+      })
+      .catch((error) => {
+        // An error happened.
+      });
+  };
+
+  const getDaySuffix = (day) => {
+    switch (day % 10) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
+    }
+  };
+
+  const dummyTasks = [
+    editTask(
+      "Apple",
+      "Eat an apple a day",
+      "Healthy Eating",
+      "November 10",
+      "Daily"
+    ),
+    editTask("Walk", "Go for a walk", "Mental", "December 12", "Daily"),
+  ];
+
+  const currentDate = new Date();
+  const monthName = currentDate.toLocaleString("default", { month: "long" });
 
   return (
     <>
@@ -172,11 +203,7 @@ function TaskPage() {
             >
               Home
             </Button>
-            <Button
-              onClick={handleLogout}
-              variant="neutral"
-              size="small"
-            >
+            <Button onClick={handleLogout} variant="neutral" size="small">
               Sign Out
             </Button>
           </div>
@@ -195,7 +222,6 @@ function TaskPage() {
             backgroundColor: "white",
             border: "2px solid lightgray",
             borderRadius: "5px",
-            
           }}
         >
           <div
@@ -223,119 +249,78 @@ function TaskPage() {
                 paddingBottom: "5%",
               }}
             >
-              Date (today)
+              Today's date: {monthName} {currentDate.getDate()}
+              {getDaySuffix(currentDate.getDate())}
             </p>
-            <div className="App-bordered">
-              <Col
-                className="Col2"
-                style={{ width: "11%", position: "fixed", display: "flex" }}
-              >
-                <img
-                  src={logo}
-                  className="App-logo3"
-                  alt="logo"
-                  style={{ margin: "2%" }}
-                />
-              </Col>
-              <Col
-                className="Col3"
-                style={{
-                  width: "50%",
-                  position: "fixed",
-                  display: "flex",
-                  left: "25%",
-                }}
-              >
-                <div>
-                  <p
+            <div style={{ display: "table", width: "100%", height: "90%" }}>
+              {dummyTasks.slice(0, 2).map((t) => (
+                <div
+                  className="App-bordered"
+                  style={{
+                    position: "relative",
+                    padding: "10px",
+                    border: "2px solid gray",
+
+                    marginBottom: "2%",
+                  }}
+                >
+                  <Col
+                    className="Col2"
+                    style={{ width: "10%", position: "fixed", display: "flex" }}
+                  >
+                    <img
+                      src={logo}
+                      className="App-logo3"
+                      alt="logo"
+                      style={{ margin: "2%" }}
+                    />
+                  </Col>
+                  <Col
+                    className="Col3"
                     style={{
-                      fontSize: "100%",
-                      fontWeight: "600",
-                      lineHeight: "50%",
+                      width: "50%",
+                      position: "fixed",
+                      display: "flex",
+                      left: "25%",
                     }}
                   >
-                    Task 1
-                  </p>
-                  <p
-                    style={{
-                      color: "gray",
-                      fontSize: "90%",
-                      fontWeight: "600",
-                      lineHeight: "50%",
-                    }}
-                  >
-                    Task Description
-                  </p>
-                  <p>
-                    <Button
-                      style={{
-                        backgroundColor: "white",
-                        border: "none",
-                        textDecorationLine: "underline",
-                      }}
-                    >
-                      Edit Task
-                    </Button>
-                  </p>
-                  <Button style={{ top: "20%" }}>Done</Button>
+                    <div>
+                      <p
+                        style={{
+                          fontSize: "100%",
+                          fontWeight: "600",
+                          lineHeight: "50%",
+                        }}
+                      >
+                        {t.title}
+                      </p>
+                      <p
+                        style={{
+                          color: "gray",
+                          fontSize: "90%",
+                          fontWeight: "600",
+                          lineHeight: "50%",
+                        }}
+                      >
+                        Description: {t.task}. Due date: {t.dueDate}.
+                      </p>
+                      <p>
+                        <Button
+                          style={{
+                            backgroundColor: "white",
+                            border: "none",
+                            textDecorationLine: "underline",
+                            padding: "0%",
+                          }}
+                        >
+                          Edit Task
+                        </Button>
+                      </p>
+                      <Button style={{ top: "20%" }}>Done</Button>
+                    </div>
+                  </Col>
                 </div>
-              </Col>
-            </div>
-            <div className="App-bordered">
-              <Col
-                className="Col2"
-                style={{ width: "11%", position: "fixed", display: "flex" }}
-              >
-                <img
-                  src={logo}
-                  className="App-logo3"
-                  alt="logo"
-                  style={{ margin: "2%" }}
-                />
-              </Col>
-              <Col
-                className="Col3"
-                style={{
-                  width: "50%",
-                  position: "fixed",
-                  display: "flex",
-                  left: "25%",
-                }}
-              >
-                <div>
-                  <p
-                    style={{
-                      fontSize: "100%",
-                      fontWeight: "600",
-                      lineHeight: "50%",
-                    }}
-                  >
-                    Task 2
-                  </p>
-                  <p
-                    style={{
-                      color: "gray",
-                      fontSize: "90%",
-                      fontWeight: "600",
-                      lineHeight: "50%",
-                    }}
-                  >
-                    Task Description
-                  </p>
-                  <p>
-                    <Button
-                      style={{
-                        backgroundColor: "white",
-                        border: "none",
-                        textDecorationLine: "underline",
-                      }}
-                    >
-                      Edit Task
-                    </Button>
-                  </p>
-                  <Button style={{ top: "20%" }}>Done</Button>
-                </div>
-              </Col>
+              ))}
             </div>
           </div>
           <Button
@@ -375,7 +360,6 @@ function TaskPage() {
               paddingTop: "10%",
               paddingLeft: "39%",
               textAlign: "center",
-              
             }}
           >
             <img src={Award} alt="award" style={{}}></img>
@@ -384,7 +368,6 @@ function TaskPage() {
                 fontSize: "110%",
                 fontWeight: "600",
                 lineHeight: "50%",
-                
               }}
             >
               100%
@@ -424,28 +407,32 @@ function TaskPage() {
                 color: "gray",
               }}
             >
-              Day/Month
+              {currentDate.getMonth() + 1}/{currentDate.getDate()}
             </p>
-            <p
-              style={{
-                fontSize: "90%",
-                fontWeight: "600",
-                lineHeight: "50%",
-                paddingTop: "20%",
-              }}
-            >
-              Task
-            </p>
-            <p
-              style={{
-                fontSize: "80%",
-                fontWeight: "400",
-                lineHeight: "50%",
-                color: "gray",
-              }}
-            >
-              Description
-            </p>
+            {dummyTasks.map((t) => (
+              <div>
+                <p
+                  style={{
+                    fontSize: "90%",
+                    fontWeight: "600",
+                    lineHeight: "50%",
+                    paddingTop: "20%",
+                  }}
+                >
+                  {t.title}
+                </p>
+                <p
+                  style={{
+                    fontSize: "80%",
+                    fontWeight: "400",
+                    lineHeight: "50%",
+                    color: "gray",
+                  }}
+                >
+                  {t.task}
+                </p>
+              </div>
+            ))}
           </div>
         </Col>
       </div>
@@ -457,7 +444,6 @@ function TaskPage() {
       {/* Modal */}
       <div id="editTask" data-testid="editTask" className="modal">
         <div className="modal-content">
-
           {/* Modal Title */}
           <div id="titleFrame" className="modalTitle">
             <div className="modalHeader">
@@ -479,7 +465,10 @@ function TaskPage() {
           {/* Modal Content */}
           <div className="modalContentFrame">
             {/* Top Row */}
-            <Form.Group controlId="formDescription" style={{ gridColumn: "1", gridRow: "1" }}>
+            <Form.Group
+              controlId="formDescription"
+              style={{ gridColumn: "1", gridRow: "1" }}
+            >
               <Form.Label>Description:</Form.Label>
               <Form.Control
                 size="lg"
@@ -490,7 +479,10 @@ function TaskPage() {
               />
             </Form.Group>
 
-            <Form.Group controlId="taskType" style={{ gridColumn: "2", gridRow: "1" }}>
+            <Form.Group
+              controlId="taskType"
+              style={{ gridColumn: "2", gridRow: "1" }}
+            >
               <Form.Label>Task Type:</Form.Label>
               <Form.Select value={type} onChange={updateType}>
                 {TASKTYPE.map((type) => (
@@ -501,11 +493,12 @@ function TaskPage() {
               </Form.Select>
             </Form.Group>
 
-            <Form.Group controlId="formDate" style={{ gridColumn: "3", gridRow: "1" }}>
+            <Form.Group
+              controlId="formDate"
+              style={{ gridColumn: "3", gridRow: "1" }}
+            >
               <Form.Label>Date:</Form.Label>
-              <Form.Control
-                value={dueDate.toString()}
-              />
+              <Form.Control value={dueDate.toString()} />
             </Form.Group>
 
             {/* Bottom Row */}
@@ -520,16 +513,17 @@ function TaskPage() {
               />
               {isRepeat && (
                 <Form.Group controlId="tasktype">
-                    <Form.Label>How often?</Form.Label>
-                    <Form.Select value={repeatType} onChange={updateRepeatType}>
-                      { REPEATTYPE.map((type) =>
-                        <option key={type} value={type}>{type}</option>
-                      )}
-                    </Form.Select>
+                  <Form.Label>How often?</Form.Label>
+                  <Form.Select value={repeatType} onChange={updateRepeatType}>
+                    {REPEATTYPE.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </Form.Select>
                 </Form.Group>
               )}
             </Col>
-            
 
             <div style={{ gridColumn: "2", gridRow: "2" }}>
               <Form.Label>Time:</Form.Label>
@@ -560,7 +554,9 @@ function TaskPage() {
           {/* Modal Footer*/}
           <div className="modalFooter">
             <Button className="smallButton">Set Reminder</Button>
-            <Button onClick={submitTask} className="largeButton">Submit</Button>
+            <Button onClick={submitTask} className="largeButton">
+              Submit
+            </Button>
           </div>
         </div>
       </div>
