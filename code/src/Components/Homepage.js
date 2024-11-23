@@ -13,7 +13,7 @@ import { db } from "./firebase";
 import { doc, getDoc } from 'firebase/firestore';
 
 
-function HomePage() {
+function App() {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
 
@@ -35,7 +35,7 @@ function HomePage() {
               // User is signed out
               // ...
               console.log("user is logged out")
-              navigate("/login");
+              navigate("/");
               
             }
           });
@@ -142,7 +142,7 @@ function HomePage() {
         <h2>{}</h2>
         <div>
           <Col className="App-panel3">
-            <div className="Column 1" style={{ width: "100%", height: "100%" }}>
+            <div className="Column 1" style={{ width: "100%", height: "100%", border: "2px solid lightgray", borderRadius: "5px" }}>
               <img
                 src={logo2}
                 className="App-logo3"
@@ -151,7 +151,11 @@ function HomePage() {
               ></img>
             </div>
           </Col>
-          <Col className="App-panel4">
+          <Col className="App-panel4"
+          style={{
+            border: "2px solid lightgray",
+            borderRadius: "5px",
+          }}>
             <div
               className="Column 2"
               style={{
@@ -203,7 +207,7 @@ function HomePage() {
             </div>
           </Col>
           <Col>
-            <Row className="App-panel5" style={{ height: "35%" }}>
+            <Row className="App-panel5" style={{ height: "35%", border: "2px solid lightgray", borderRadius: "5px"}}>
               <div
                 className="Column 3 Row 1"
                 style={{
@@ -231,7 +235,7 @@ function HomePage() {
                 </p>
               </div>
             </Row>
-            <Row className="App-panel5" style={{ top: "50%", height: "35%" }}>
+            <Row className="App-panel5" style={{ top: "50%", height: "35%", border: "2px solid lightgray", borderRadius: "5px" }}>
               <div
                 className="Column 3 Row 1"
                 style={{
@@ -267,4 +271,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default App;

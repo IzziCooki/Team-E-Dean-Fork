@@ -193,6 +193,9 @@ function TaskPage() {
             width: "60%",
             height: "74%",
             backgroundColor: "white",
+            border: "2px solid lightgray",
+            borderRadius: "5px",
+            
           }}
         >
           <div
@@ -363,6 +366,8 @@ function TaskPage() {
             width: "20%",
             height: "30%",
             backgroundColor: "white",
+            border: "2px solid lightgray",
+            borderRadius: "5px",
           }}
         >
           <div
@@ -370,6 +375,7 @@ function TaskPage() {
               paddingTop: "10%",
               paddingLeft: "39%",
               textAlign: "center",
+              
             }}
           >
             <img src={Award} alt="award" style={{}}></img>
@@ -378,6 +384,7 @@ function TaskPage() {
                 fontSize: "110%",
                 fontWeight: "600",
                 lineHeight: "50%",
+                
               }}
             >
               100%
@@ -394,6 +401,8 @@ function TaskPage() {
             width: "20%",
             height: "39%",
             backgroundColor: "white",
+            border: "2px solid lightgray",
+            borderRadius: "5px",
           }}
         >
           <div style={{ paddingLeft: "7%" }}>
