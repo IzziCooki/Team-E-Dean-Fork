@@ -6,7 +6,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from './firebase';
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-//import { editTask } from './TaskLogic' //not yet implemented
+import { editTask } from './TaskLogic' //not yet implemented
 import Calendar from 'react-calendar'
 import "./../App.css";
 
@@ -14,12 +14,13 @@ function TaskPage() {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [task, setTask] = useState("");
-  const [type, setType] = useState("");
+  const [type, setType] = useState("Healthy Eating");
   const [dueDate, setDueDate] = useState(new Date());
   const [dueHour, setDueHour] = useState(0);
   const [dueMinute, setDueMinute] = useState(0);
   const [isRepeat, setIsRepeat] = useState(false);
   const [repeatType, setRepeatType] = useState("");
+  const [tasks, setTasks] = useState([]);
   //const [isComplete, setIsComplete] = useState(false); //not yet implemented
   const TASKTYPE = ["Healthy Eating", "Rest", "Knowledge", "Social", "Tidyness", "Mental"]
   const REPEATTYPE = ["Daily", "Weekly", "Bi-Weekly", "Monthly"]
@@ -42,29 +43,39 @@ function TaskPage() {
   }
 
   function updateRepeatType(event) {
-    setRepeatType(event.target.checked);
+    setRepeatType(event.target.value);
   }
 
+  function updateDueDate(event) {
+    let newDueDate = new Date(event)
+    newDueDate.setHours(dueDate.getHours(), dueDate.getMinutes())
+    setDueDate(newDueDate)
+  }
   function updateHour(event) {
-    setDueHour(event.target.checked);
+    setDueHour(event.target.value);
   }
 
   function updateMinute(event) {
-    setDueMinute(event.target.checked);
+    setDueMinute(event.target.value);
   }
 
-  function setTimeHour(event) { //these 2 set time functions are currently bugged and do not work
+  function setTimeHour(event) { 
     updateHour(event)
-    let newDueDate = new Date()
-    newDueDate = dueDate.setHours(dueHour,dueMinute,0)
+    let newDueDate = new Date(dueDate)
+    newDueDate.setHours(event.target.value)
     setDueDate(newDueDate)
   }
 
   function setTimeMinute(event) {
     updateMinute(event)
-    let newDueDate = new Date()
-    newDueDate = dueDate.setHours(dueHour,dueMinute,0)
+    let newDueDate = new Date(dueDate)
+    newDueDate.setMinutes(event.target.value)
     setDueDate(newDueDate)
+  }
+
+  function updateTasks(task) {
+    const newTasks = [...tasks, task]
+    setTasks(newTasks)
   }
   
   // Function to open the modal
@@ -75,13 +86,40 @@ function TaskPage() {
     }
   };
 
-  // Function to close the modal
+  // Function to close the modal on close
   const closeEditTask = () => {
     const modal = document.getElementById("editTask");
     if (modal) {
       modal.style.display = "none";
     }
+    setTitle("");
+    setTask("");
+    setType("");
+    setDueDate(new Date());
+    setDueHour(0);
+    setDueMinute(0);
+    setIsRepeat(false);
+    setRepeatType("");
   };
+
+  // Function to close the modal on close on submit
+  const submitTask = () => {
+    const modal = document.getElementById("editTask");
+    if (modal) {
+      modal.style.display = "none";
+    }
+    let newTask = editTask(title,task,type,dueDate,isRepeat);
+    updateTasks(newTask);
+    setTitle("");
+    setTask("");
+    setType("");
+    setDueDate(new Date());
+    setDueHour(0);
+    setDueMinute(0);
+    setIsRepeat(false);
+    setRepeatType("");
+  };
+  
 
   useEffect(()=>{
     onAuthStateChanged(auth, (user) => {
@@ -155,6 +193,9 @@ function TaskPage() {
             width: "60%",
             height: "74%",
             backgroundColor: "white",
+            border: "2px solid lightgray",
+            borderRadius: "5px",
+            
           }}
         >
           <div
@@ -299,6 +340,7 @@ function TaskPage() {
           </div>
           <Button
             id="newTaskButton"
+            data-testid="newTaskButton"
             onClick={openEditTask}
             style={{
               marginTop: "2%",
@@ -324,6 +366,8 @@ function TaskPage() {
             width: "20%",
             height: "30%",
             backgroundColor: "white",
+            border: "2px solid lightgray",
+            borderRadius: "5px",
           }}
         >
           <div
@@ -331,6 +375,7 @@ function TaskPage() {
               paddingTop: "10%",
               paddingLeft: "39%",
               textAlign: "center",
+              
             }}
           >
             <img src={Award} alt="award" style={{}}></img>
@@ -339,6 +384,7 @@ function TaskPage() {
                 fontSize: "110%",
                 fontWeight: "600",
                 lineHeight: "50%",
+                
               }}
             >
               100%
@@ -355,6 +401,8 @@ function TaskPage() {
             width: "20%",
             height: "39%",
             backgroundColor: "white",
+            border: "2px solid lightgray",
+            borderRadius: "5px",
           }}
         >
           <div style={{ paddingLeft: "7%" }}>
@@ -406,96 +454,114 @@ function TaskPage() {
       </div>
       <div className="App-background">{}</div>
 
-      <div id="editTask" className="modal">
+      {/* Modal */}
+      <div id="editTask" data-testid="editTask" className="modal">
         <div className="modal-content">
-          <Button onClick={closeEditTask}>Close</Button>
-          <Form.Group controlId="formTitle" as={Row}>
-                <Form.Label column sm={2}>
-                    Title:
-                </Form.Label>
-                <Col>
-                    <Form.Control
-                        value={title}
-                        onChange={(
-                            event,
-                        ) => {
-                            setTitle(event.target.value);
-                        }}
-                    />
-                </Col>
+
+          {/* Modal Title */}
+          <div id="titleFrame" className="modalTitle">
+            <div className="modalHeader">
+              <div className="titleForm">
+                <Form.Group controlId="formTitle" as={Row}>
+                  <Form.Control
+                    value={title}
+                    placeholder="Task Name"
+                    onChange={(event) => setTitle(event.target.value)}
+                  />
+                </Form.Group>
+              </div>
+              <Button className="closeButton" onClick={closeEditTask}>
+                Close
+              </Button>
+            </div>
+          </div>
+
+          {/* Modal Content */}
+          <div className="modalContentFrame">
+            {/* Top Row */}
+            <Form.Group controlId="formDescription" style={{ gridColumn: "1", gridRow: "1" }}>
+              <Form.Label>Description:</Form.Label>
+              <Form.Control
+                size="lg"
+                as="textarea"
+                rows={3}
+                value={task}
+                onChange={(event) => setTask(event.target.value)}
+              />
             </Form.Group>
-            <Form.Group controlId="formDescription" as={Row}>
-                <Form.Label column sm={2}>
-                    Description:
-                </Form.Label>
-                <Col>
-                    <Form.Control
-                        size="lg"
-                        as="textarea"
-                        rows={5}
-                        cols={50}
-                        type="text"
-                        value={task}
-                        onChange={(
-                            event,
-                        ) => {
-                            setTask(event.target.value);
-                        }}
-                    />
-                </Col>
+
+            <Form.Group controlId="taskType" style={{ gridColumn: "2", gridRow: "1" }}>
+              <Form.Label>Task Type:</Form.Label>
+              <Form.Select value={type} onChange={updateType}>
+                {TASKTYPE.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </Form.Select>
             </Form.Group>
-            <Form.Group controlId="tasktype">
-                <Form.Label>Task Type:</Form.Label>
-                <Form.Select value={type} onChange={updateType}>
-                  { TASKTYPE.map((type) =>
-                    <option key={type} value={type}>{type}</option>
-                  )}
-                </Form.Select>
+
+            <Form.Group controlId="formDate" style={{ gridColumn: "3", gridRow: "1" }}>
+              <Form.Label>Date:</Form.Label>
+              <Form.Control
+                value={dueDate.toString()}
+              />
             </Form.Group>
-            <Form.Group controlId="formDate" as={Row}>
-                <Form.Label column sm={2}>
-                    Date:
-                </Form.Label>
-                <Col>
-                    <Form.Control
-                        value={dueDate}
-                        placeholder={Date.now()}
-                        onChange={(
-                            event,
-                        ) => {
-                            setDueDate(event.target.value);
-                        }}
-                    />
-                    <Form.Select value={dueHour} onChange={setTimeHour}>
-                      { hours.map((type) =>
-                        <option key={type} value={type}>{type}</option>
-                      )}
-                    </Form.Select>
-                    <Form.Select value={dueMinute} onChange={setTimeMinute}>
-                      { minutes.map((type) =>
-                        <option key={type} value={type}>{type}</option>
-                      )}
-                    </Form.Select>
-                </Col>
-            </Form.Group>
-            <Calendar onChange={setDueDate} value={dueDate}/>
-            <Form.Check
+
+            {/* Bottom Row */}
+            <Col>
+              <Form.Check
                 type="checkbox"
                 id="is-repeat-check"
                 label="Repeat?"
                 checked={isRepeat}
                 onChange={updateRepeat}
-            />
-            {isRepeat && (
-              <Form.Group controlId="tasktype">
-                  <Form.Label>How often?</Form.Label>
-                  <Form.Select value={repeatType} onChange={updateRepeatType}>
-                    { REPEATTYPE.map((type) =>
-                      <option key={type} value={type}>{type}</option>
-                    )}
-                  </Form.Select>
-              </Form.Group>
+                style={{ gridColumn: "1", gridRow: "2" }}
+              />
+              {isRepeat && (
+                <Form.Group controlId="tasktype">
+                    <Form.Label>How often?</Form.Label>
+                    <Form.Select value={repeatType} onChange={updateRepeatType}>
+                      { REPEATTYPE.map((type) =>
+                        <option key={type} value={type}>{type}</option>
+                      )}
+                    </Form.Select>
+                </Form.Group>
               )}
+            </Col>
+            
+
+            <div style={{ gridColumn: "2", gridRow: "2" }}>
+              <Form.Label>Time:</Form.Label>
+              <div className="timeDropdowns">
+                <Form.Select value={dueHour} onChange={setTimeHour}>
+                  {hours.map((hour) => (
+                    <option key={hour} value={hour}>
+                      {hour}
+                    </option>
+                  ))}
+                </Form.Select>
+                <Form.Select value={dueMinute} onChange={setTimeMinute}>
+                  {minutes.map((minute) => (
+                    <option key={minute} value={minute}>
+                      {minute}
+                    </option>
+                  ))}
+                </Form.Select>
+              </div>
+            </div>
+            <Calendar
+              onChange={updateDueDate}
+              value={dueDate}
+              className="calendar"
+              style={{ gridColumn: "3", gridRow: "2" }}
+            />
+          </div>
+          {/* Modal Footer*/}
+          <div className="modalFooter">
+            <Button className="smallButton">Set Reminder</Button>
+            <Button onClick={submitTask} className="largeButton">Submit</Button>
+          </div>
         </div>
       </div>
     </>

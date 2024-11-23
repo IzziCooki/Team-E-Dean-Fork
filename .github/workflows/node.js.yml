@@ -31,3 +31,4 @@ jobs:
         run: |
           cd code
           npm run build
+          npm run test
