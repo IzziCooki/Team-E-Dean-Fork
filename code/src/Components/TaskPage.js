@@ -253,7 +253,7 @@ function TaskPage() {
               {getDaySuffix(currentDate.getDate())}
             </p>
             <div style={{ display: "table", width: "100%", height: "90%" }}>
-              {dummyTasks.slice(0, 2).map((t) => (
+              {tasks.slice(tasks.length - 2, tasks.length).map((t) => (
                 <div
                   className="App-bordered"
                   style={{
@@ -302,7 +302,8 @@ function TaskPage() {
                           lineHeight: "50%",
                         }}
                       >
-                        Description: {t.task}. Due date: {t.dueDate}.
+                        Description: {t.task}. Due date:{" "}
+                        {t.dueDate.toLocaleString()}.
                       </p>
                       <p>
                         <Button
@@ -409,7 +410,7 @@ function TaskPage() {
             >
               {currentDate.getMonth() + 1}/{currentDate.getDate()}
             </p>
-            {dummyTasks.map((t) => (
+            {tasks.slice(tasks.length - 2, tasks.length).map((t) => (
               <div>
                 <p
                   style={{
