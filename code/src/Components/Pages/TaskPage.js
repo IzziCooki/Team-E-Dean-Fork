@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import logo from "./../logo.svg";
-import logo2 from "./../logo2.svg";
-import Award from "./../Award.svg";
+import logo from "../../logo.svg";
+import logo2 from "../../logo2.svg";
+import Award from "../../Award.svg";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "./firebase";
+import { auth } from "../firebase";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { editTask } from "./TaskLogic"; //not yet implemented
+import { editTask } from "../Hooks/TaskLogic"; //not yet implemented
 import Calendar from "react-calendar";
 import "react-calendar/dist/cjs";
-import "./../App.css";
+import "../../App.css";
 
 function TaskPage() {
   const navigate = useNavigate();

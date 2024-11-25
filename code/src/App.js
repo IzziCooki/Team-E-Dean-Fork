@@ -1,11 +1,11 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Login from "./Components/Loginpage";
-import HomePage from "./Components/Homepage";
-import SignUp from "./Components/RegisterPage";
-import TaskPage from "./Components/TaskPage";
-import AvatarPage from "./Components/Avatarpage";
+import Login from "./Components/Pages/Loginpage";
+import HomePage from "./Components/Pages/Homepage";
+import SignUp from "./Components/Pages/RegisterPage";
+import TaskPage from "./Components/Pages/TaskPage";
+import AvatarPage from "./Components/Pages/Avatarpage";
 
 import "./App.css";
 

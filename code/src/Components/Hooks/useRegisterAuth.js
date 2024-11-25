@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { db, auth } from "../Components/firebase";
+import { db, auth } from "../firebase";
 
 const useRegisterAuth = () => {
   // Initialize navigate inside the hook
