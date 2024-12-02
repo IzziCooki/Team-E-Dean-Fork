@@ -42,26 +42,59 @@ describe("Avatar page components", () => {
         expect(dropdownButtons.length).toBe(6);
       });
 
-    //   test("displays the menu when the dropdown button is clicked", () => {
-    //     render(
-    //       <Router>
-    //         <App />
-    //       </Router>
-    //     );
+
+    // test("multiple selections update the state and display correct images", () => {
+    //   render(
+    //     <Router>
+    //       <App />
+    //     </Router>
+    //   );
+  
+    //   // Open the first dropdown (Background)
+    //   fireEvent.click(screen.getByText('None'));
+  
+    //   // Select the "Hearts" option
+    //   fireEvent.click(screen.getByText('Hearts'));
+  
+    //   // Open the second dropdown (Skin Tone)
+    //   fireEvent.click(screen.getAllByText('None')[1]);
+  
+    //   // Select the "Fair" option
+    //   fireEvent.click(screen.getByText('Fair'));
+  
+    //   // Check if the hearts image is displayed
+    //   const heartsImage = screen.getByAltText('avatar-option');
+    //   expect(heartsImage).toBeInTheDocument();
+    //   expect(heartsImage.src).toContain('bghearts.png');
+  
+    //   // Check if the skin tone image is displayed
+    //   const skinImage = screen.getAllByAltText('avatar-option')[1];
+    //   expect(skinImage).toBeInTheDocument();
+    //   expect(skinImage.src).toContain('skin1.png');
+    // });
+
+
     
-    //     // Find the dropdown button
-    //     const dropdownButton = screen.getByText(/None/i); // Adjust text as necessary
+      test("displays the menu when the dropdown button is clicked", () => {
+        render(
+          <Router>
+            <App />
+          </Router>
+        );
     
-    //     // Initially, the menu should not be visible
-    //     const dropdownMenu = screen.queryByText(/hearts/i); // Adjust text as necessary
-    //     expect(dropdownMenu).not.toBeInTheDocument();
+        // Find the dropdown button
+        const dropdownButton = screen.getByText('None');
     
-    //     // Simulate clicking the dropdown button
-    //     fireEvent.click(dropdownButton);
+        // Initially, the menu should not be visible
+        const dropdownMenu = screen.queryByText('Hearts');
+        expect(dropdownMenu).not.toBeInTheDocument();
     
-    //     // Now, the menu should be visible
-    //     const visibleMenu = screen.getByText(/hearts/i); // Adjust text as necessary
-    //     expect(visibleMenu).toBeInTheDocument();
-    //   });
+        // Simulate clicking the dropdown button
+        fireEvent.click(dropdownButton);
+    
+        // Now, the menu should be visible
+        const visibleMenu = screen.getByText('Hearts'); 
+        expect(visibleMenu).toBeInTheDocument();
+      });
     
 });
