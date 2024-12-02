@@ -43,38 +43,6 @@ describe("Avatar page components", () => {
       });
 
 
-    // test("multiple selections update the state and display correct images", () => {
-    //   render(
-    //     <Router>
-    //       <App />
-    //     </Router>
-    //   );
-  
-    //   // Open the first dropdown (Background)
-    //   fireEvent.click(screen.getByText('None'));
-  
-    //   // Select the "Hearts" option
-    //   fireEvent.click(screen.getByText('Hearts'));
-  
-    //   // Open the second dropdown (Skin Tone)
-    //   fireEvent.click(screen.getAllByText('None')[1]);
-  
-    //   // Select the "Fair" option
-    //   fireEvent.click(screen.getByText('Fair'));
-  
-    //   // Check if the hearts image is displayed
-    //   const heartsImage = screen.getByAltText('avatar-option');
-    //   expect(heartsImage).toBeInTheDocument();
-    //   expect(heartsImage.src).toContain('bghearts.png');
-  
-    //   // Check if the skin tone image is displayed
-    //   const skinImage = screen.getAllByAltText('avatar-option')[1];
-    //   expect(skinImage).toBeInTheDocument();
-    //   expect(skinImage.src).toContain('skin1.png');
-    // });
-
-
-    
       test("displays the menu when the dropdown button is clicked", () => {
         render(
           <Router>
@@ -82,19 +50,44 @@ describe("Avatar page components", () => {
           </Router>
         );
     
-        // Find the dropdown button
-        const dropdownButton = screen.getByText('None');
+        const dropdownButton = screen.getByTestId('dropdown-button-0');
     
-        // Initially, the menu should not be visible
         const dropdownMenu = screen.queryByText('Hearts');
         expect(dropdownMenu).not.toBeInTheDocument();
     
-        // Simulate clicking the dropdown button
         fireEvent.click(dropdownButton);
     
-        // Now, the menu should be visible
         const visibleMenu = screen.getByText('Hearts'); 
         expect(visibleMenu).toBeInTheDocument();
       });
+
+
+      test("multiple selections update the state and display correct images", () => {
+        render(
+          <Router>
+            <App />
+          </Router>
+        );
+  
+        fireEvent.click(screen.getByTestId('dropdown-button-0'));
+  
+        fireEvent.click(screen.getByText('Hearts'));
+  
+        fireEvent.click(screen.getByTestId('dropdown-button-1'));
+  
+        // Select the "Fair" option
+        fireEvent.click(screen.getByText('Fair'));
+  
+        // Check if the hearts image is displayed
+        const heartsImage = screen.getAllByAltText('avatar-option')[0];
+        expect(heartsImage).toBeInTheDocument();
+        expect(heartsImage.src).toContain('bghearts.png');
+  
+        // Check if the skin tone image is displayed
+        const skinImage = screen.getAllByAltText('avatar-option')[1];
+        expect(skinImage).toBeInTheDocument();
+        expect(skinImage.src).toContain('skin1.png');
+    });
+
     
 });
