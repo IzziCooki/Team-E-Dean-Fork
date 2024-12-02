@@ -20,11 +20,11 @@ describe("Avatar page components", () => {
             <App />
           </Router>
         );
-      
+
         const homeButton = screen.getByText(/Home/i);
         const tasksButton = screen.getByText(/Tasks/i);
         const signOutButton = screen.getByText(/Sign Out/i);
-      
+
         expect(homeButton).toBeInTheDocument();
         expect(tasksButton).toBeInTheDocument();
         expect(signOutButton).toBeInTheDocument();
@@ -38,7 +38,7 @@ describe("Avatar page components", () => {
         );
         const dropdownButtons = [
           "Background", "Skin Tone", "Eye Color", "Hair", "Hats", "Outfits"
-        ].map(text => screen.getByText(text));        
+        ].map(text => screen.getByText(text));
         expect(dropdownButtons.length).toBe(6);
       });
 
@@ -49,15 +49,15 @@ describe("Avatar page components", () => {
             <App />
           </Router>
         );
-    
+
         const dropdownButton = screen.getByTestId('dropdown-button-0');
-    
+
         const dropdownMenu = screen.queryByText('Hearts');
         expect(dropdownMenu).not.toBeInTheDocument();
-    
+
         fireEvent.click(dropdownButton);
-    
-        const visibleMenu = screen.getByText('Hearts'); 
+
+        const visibleMenu = screen.getByText('Hearts');
         expect(visibleMenu).toBeInTheDocument();
       });
 
@@ -68,26 +68,23 @@ describe("Avatar page components", () => {
             <App />
           </Router>
         );
-  
+
         fireEvent.click(screen.getByTestId('dropdown-button-0'));
-  
+
         fireEvent.click(screen.getByText('Hearts'));
-  
+
         fireEvent.click(screen.getByTestId('dropdown-button-1'));
-  
-        // Select the "Fair" option
+
         fireEvent.click(screen.getByText('Fair'));
-  
-        // Check if the hearts image is displayed
+
         const heartsImage = screen.getAllByAltText('avatar-option')[0];
         expect(heartsImage).toBeInTheDocument();
         expect(heartsImage.src).toContain('bghearts.png');
-  
-        // Check if the skin tone image is displayed
+
         const skinImage = screen.getAllByAltText('avatar-option')[1];
         expect(skinImage).toBeInTheDocument();
         expect(skinImage.src).toContain('skin1.png');
     });
 
-    
+
 });
