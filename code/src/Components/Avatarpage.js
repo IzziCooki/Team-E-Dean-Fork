@@ -294,6 +294,7 @@ function AvatarPage() {
 
                     {/* Actual Dropdown Button */}
                     <button
+                      data-testid={`dropdown-button-${index}`}
                       className="dropbtn"
                       style={{
                         display: "flex",
