@@ -11,7 +11,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/cjs";
 import "./../App.css";
 
-function TaskPage() {
+function TaskPage({ points, setPoints }) {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [task, setTask] = useState("");
@@ -22,7 +22,7 @@ function TaskPage() {
   const [isRepeat, setIsRepeat] = useState(false);
   const [repeatType, setRepeatType] = useState("");
   const [tasks, setTasks] = useState([]);
-  //const [isComplete, setIsComplete] = useState(false); //not yet implemented
+  const [isComplete, setIsComplete] = useState(false); //not yet implemented
   const TASKTYPE = [
     "Healthy Eating",
     "Rest",
@@ -86,6 +86,20 @@ function TaskPage() {
     setTasks(newTasks);
   }
 
+  const updateAvatar = (task) => {
+    console.log(`Avatar updated based on task type: ${task.type}`);
+  };
+
+  const completeTask = (task) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((t) =>
+        t === task ? { ...t, setIsComplete: true } : t
+      )
+    );
+    setPoints((prevPoints) => prevPoints + 15); // change 15 to task.rewardPoints if each task has custom points
+    updateAvatar(task); // Call avatar update here
+  };
+
   // Function to open the modal
   const openEditTask = () => {
     const modal = document.getElementById("editTask");
@@ -110,7 +124,7 @@ function TaskPage() {
     setRepeatType("");
   };
 
-  // Function to close the modal on close on submit
+  // Function to close the modal on submit
   const submitTask = () => {
     const modal = document.getElementById("editTask");
     if (modal) {
@@ -182,6 +196,18 @@ function TaskPage() {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <img src={logo2} className="App-logo2" alt="logo" />
+          {/* Points Display */}
+          <div
+            className="points-display"
+            style={{
+              padding: '10px',
+              backgroundColor: "white",
+              fontWeight: "bold",
+              color: "darkgreen",
+            }}
+          >
+            Points: {points} {/* Dynamically show points */}
+          </div>
           <div className="App-buttons">
             <Button
               onClick={() => {
@@ -306,7 +332,8 @@ function TaskPage() {
                           Edit Task
                         </Button>
                       </p>
-                      <Button style={{ top: "20%" }}>Done</Button>
+                      <Button style={{ top: "20%" }} onClick={() => completeTask(task)}>Done</Button>
+
                     </div>
                   </Col>
                 </div>

@@ -1,10 +1,11 @@
-export function editTask (title, task, type, dueDate, isRepeat)
+export function editTask (title, task, type, dueDate, isRepeat, points)
 {
     let Title = title;
     let Task = task;
     let Type = type;
     let DueDate = dueDate
     let IsRepeat = isRepeat
+    let Points = points
 
     const newTask = {
         title: Title,
@@ -12,7 +13,8 @@ export function editTask (title, task, type, dueDate, isRepeat)
         type: Type,
         dueDate: DueDate,
         isRepeat: IsRepeat,
-        isComplete: false
+        isComplete: false,
+        points: Points
     }
     return newTask
 }
