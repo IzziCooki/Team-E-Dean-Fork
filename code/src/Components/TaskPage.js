@@ -207,7 +207,7 @@ function TaskPage() {
 
     // Cleanup subscription
     return () => unsubscribe();
-  }, []); // Empty dependency array to run only on mount
+  }, [navigate]); // Add navigate to the dependency array
 
   const handleLogout = () => {
     signOut(auth)
