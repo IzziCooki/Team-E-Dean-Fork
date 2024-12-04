@@ -38,6 +38,8 @@ function TaskPage() {
   const minutes = [];
   const [currentPage, setCurrentPage] = useState(1);
   const tasksPerPage = 2;
+  const [editingTask, setEditingTask] = useState(null);
+  const [editingTaskIndex, setEditingTaskIndex] = useState(null);
 
   for (let i = 0; i < 24; i++) {
     hours.push(i);
@@ -104,6 +106,8 @@ function TaskPage() {
     if (modal) {
       modal.style.display = "none";
     }
+    setEditingTask(null);
+    setEditingTaskIndex(null);
     setTitle("");
     setTask("");
     setType("Healthy Eating");
@@ -114,7 +118,24 @@ function TaskPage() {
     setRepeatType("");
   };
 
-
+  // Function to open the edit modal with existing task data
+  const openEditExistingTask = (task, index) => {
+    setEditingTask(task);
+    setEditingTaskIndex(index);
+    setTitle(task.title);
+    setTask(task.task);
+    setType(task.type);
+    setDueDate(new Date(task.dueDate));
+    setDueHour(new Date(task.dueDate).getHours());
+    setDueMinute(new Date(task.dueDate).getMinutes());
+    setIsRepeat(task.isRepeat || false);
+    setRepeatType(task.repeatType || '');
+    
+    const modal = document.getElementById("editTask");
+    if (modal) {
+      modal.style.display = "block";
+    }
+  };
 
   // Function to close the modal on close on submit
   const submitTask = () => {
@@ -122,18 +143,31 @@ function TaskPage() {
     if (modal) {
       modal.style.display = "none";
     }
-    let newTask = editTask(title, task, type, dueDate, isRepeat);
-    updateTasks(newTask);
-    saveTaskToFirestore(newTask);
+
+    let newTask = editTask(title, task, type, dueDate, isRepeat, repeatType);
+
+    if (editingTask) {
+      // Update existing task
+      updateTaskInFirestore(newTask, editingTaskIndex);
+    } else {
+      // Create new task
+      updateTasks(newTask);
+      saveTaskToFirestore(newTask);
+    }
+
+    // Reset form
+    setEditingTask(null);
+    setEditingTaskIndex(null);
     setTitle("");
     setTask("");
-    setType("");
+    setType("Healthy Eating");
     setDueDate(new Date());
     setDueHour(0);
     setDueMinute(0);
     setIsRepeat(false);
     setRepeatType("");
   };
+
   const saveTaskToFirestore = async (taskData) => {
     try {
       const userId = auth.currentUser?.uid;
@@ -244,6 +278,36 @@ function TaskPage() {
   const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
   const totalPages = Math.ceil(tasks.length / tasksPerPage);
 
+  // Add this function to update a task in Firestore
+  const updateTaskInFirestore = async (updatedTask, taskIndex) => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        console.error("No user is signed in");
+        return;
+      }
+
+      const userDocRef = doc(db, "user", userId);
+      const docSnap = await getDoc(userDocRef);
+
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        const updatedTasks = [...userData.tasks];
+        updatedTasks[taskIndex] = updatedTask;
+
+        await updateDoc(userDocRef, {
+          tasks: updatedTasks
+        });
+
+        // Update local state
+        setTasks(updatedTasks);
+        console.log("Task successfully updated in Firestore");
+      }
+    } catch (error) {
+      console.error("Error updating task in Firestore:", error);
+    }
+  };
+
   return (
     <>
       <div className="App">
@@ -311,7 +375,7 @@ function TaskPage() {
               {getDaySuffix(currentDate.getDate())}
             </p>
             <div style={{ display: "table", width: "100%", height: "90%" }}>
-              {currentTasks.map((t) => (
+              {currentTasks.map((t, index) => (
                 <div
                   className="App-bordered"
                   style={{
@@ -371,6 +435,7 @@ function TaskPage() {
                             textDecorationLine: "underline",
                             padding: "0%",
                           }}
+                          onClick={() => openEditExistingTask(t, tasks.indexOf(t))}
                         >
                           Edit Task
                         </Button>
