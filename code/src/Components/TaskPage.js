@@ -10,6 +10,8 @@ import { editTask } from "./TaskLogic"; //not yet implemented
 import Calendar from "react-calendar";
 import "react-calendar/dist/cjs";
 import "./../App.css";
+import { db } from "./firebase";
+import { doc, arrayUnion, updateDoc } from "firebase/firestore";
 
 function TaskPage() {
   const navigate = useNavigate();
@@ -110,6 +112,24 @@ function TaskPage() {
     setRepeatType("");
   };
 
+  const saveTaskToFirestore = async (taskData) => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        console.error("No user is signed in");
+        return;
+      }
+
+      const userDocRef = doc(db, "user", userId);
+      await updateDoc(userDocRef, {
+        tasks: arrayUnion(taskData)
+      });
+      console.log("Task successfully saved to Firestore");
+    } catch (error) {
+      console.error("Error saving task to Firestore:", error);
+    }
+  };
+
   // Function to close the modal on close on submit
   const submitTask = () => {
     const modal = document.getElementById("editTask");
@@ -118,6 +138,7 @@ function TaskPage() {
     }
     let newTask = editTask(title, task, type, dueDate, isRepeat);
     updateTasks(newTask);
+    saveTaskToFirestore(newTask);
     setTitle("");
     setTask("");
     setType("");
