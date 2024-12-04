@@ -16,6 +16,7 @@ import { doc, getDoc } from 'firebase/firestore';
 function App() {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
+  const [tasks, setTasks] = useState([]);
 
   useEffect(()=>{
         onAuthStateChanged(auth, (user) => {
@@ -29,6 +30,7 @@ function App() {
               console.log("uid", uid)
               console.log("email", email)
               fetchUserData()
+              fetchTasksFromFirestore()
 
 
             } else {
@@ -40,7 +42,7 @@ function App() {
             }
           });
 
-    },)
+    },[navigate])
 
         const getUserTasks = () => {
         try {
@@ -96,6 +98,32 @@ function App() {
             });
           } catch (error) {
             console.error('Error fetching document:', error);
+          }
+        };
+
+        const fetchTasksFromFirestore = async () => {
+          try {
+            const userId = auth.currentUser?.uid;
+            if (!userId) {
+              console.error("No user is signed in");
+              return;
+            }
+
+            const userDocRef = doc(db, "user", userId);
+            const docSnap = await getDoc(userDocRef);
+
+            if (docSnap.exists()) {
+              const userData = docSnap.data();
+              if (userData.tasks) {
+                const processedTasks = userData.tasks.map(task => ({
+                  ...task,
+                  dueDate: new Date(task.dueDate)
+                }));
+                setTasks(processedTasks);
+              }
+            }
+          } catch (error) {
+            console.error("Error fetching tasks:", error);
           }
         };
 
@@ -249,10 +277,12 @@ function App() {
                   className="SeparatorRoot"
                   style={{ margin: "15px 0" }}
                 />
-                <p className="App-colBody">Task 1</p>
-                <p className="App-colBody2">Deadline</p>
-                <p className="App-colBody">Task 2</p>
-                <p className="App-colBody2">Deadline</p>
+                {tasks.map((task, index) => (
+                  <div key={index}>
+                    <p className="App-colBody">{task.title}</p>
+                    <p className="App-colBody2">{task.dueDate.toLocaleString()}</p>
+                  </div>
+                ))}
                 <p>
                   <Button onClick={() => {getUserTasks()}} variant="primary" size="small">
                     Hide
