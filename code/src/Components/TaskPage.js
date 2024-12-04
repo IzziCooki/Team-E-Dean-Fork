@@ -11,7 +11,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/cjs";
 import "./../App.css";
 import { db } from "./firebase";
-import { doc, arrayUnion, updateDoc } from "firebase/firestore";
+import { doc, arrayUnion, updateDoc, getDoc } from "firebase/firestore";
 
 function TaskPage() {
   const navigate = useNavigate();
@@ -36,6 +36,8 @@ function TaskPage() {
   const REPEATTYPE = ["Daily", "Weekly", "Bi-Weekly", "Monthly"];
   const hours = [];
   const minutes = [];
+  const [currentPage, setCurrentPage] = useState(1);
+  const tasksPerPage = 2;
 
   for (let i = 0; i < 24; i++) {
     hours.push(i);
@@ -112,23 +114,7 @@ function TaskPage() {
     setRepeatType("");
   };
 
-  const saveTaskToFirestore = async (taskData) => {
-    try {
-      const userId = auth.currentUser?.uid;
-      if (!userId) {
-        console.error("No user is signed in");
-        return;
-      }
 
-      const userDocRef = doc(db, "user", userId);
-      await updateDoc(userDocRef, {
-        tasks: arrayUnion(taskData)
-      });
-      console.log("Task successfully saved to Firestore");
-    } catch (error) {
-      console.error("Error saving task to Firestore:", error);
-    }
-  };
 
   // Function to close the modal on close on submit
   const submitTask = () => {
@@ -148,25 +134,80 @@ function TaskPage() {
     setIsRepeat(false);
     setRepeatType("");
   };
+  const saveTaskToFirestore = async (taskData) => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        console.error("No user is signed in");
+        return;
+      }
+  
+      // Convert the JavaScript Date to Firestore Timestamp before saving
+      const taskWithTimestamp = {
+        ...taskData,
+        dueDate: new Date(taskData.dueDate) // Ensure it's a Date object
+      };
+  
+      const userDocRef = doc(db, "user", userId);
+      await updateDoc(userDocRef, {
+        tasks: arrayUnion(taskWithTimestamp)
+      });
+      console.log("Task successfully saved to Firestore");
+    } catch (error) {
+      console.error("Error saving task to Firestore:", error);
+    }
+  };
+  
+  const fetchTasksFromFirestore = async () => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        console.error("No user is signed in");
+        return;
+      }
+  
+      const userDocRef = doc(db, "user", userId);
+      const docSnap = await getDoc(userDocRef);
+  
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        if (userData.tasks) {
+          console.log('Raw tasks from Firestore:', userData.tasks); // Debug log
+          const processedTasks = userData.tasks.map(task => {
+            console.log('Task due date before processing:', task.dueDate); // Debug log
+            return {
+              ...task,
+              dueDate: new Date(task.dueDate)
+            };
+          });
+          setTasks(processedTasks);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  };
+  
 
+  // Modify the existing useEffect to fetch tasks when component mounts
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
         const uid = user.uid;
         const email = user.email;
-        // ...
         console.log("uid", uid);
         console.log("email", email);
+        // Fetch tasks when user is authenticated
+        fetchTasksFromFirestore();
       } else {
-        // User is signed out
-        // ...
         console.log("user is logged out");
         navigate("/");
       }
     });
-  });
+
+    // Cleanup subscription
+    return () => unsubscribe();
+  }, []); // Empty dependency array to run only on mount
 
   const handleLogout = () => {
     signOut(auth)
@@ -195,6 +236,13 @@ function TaskPage() {
 
   const currentDate = new Date();
   const monthName = currentDate.toLocaleString("default", { month: "long" });
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const indexOfLastTask = currentPage * tasksPerPage;
+  const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+  const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
+  const totalPages = Math.ceil(tasks.length / tasksPerPage);
 
   return (
     <>
@@ -263,7 +311,7 @@ function TaskPage() {
               {getDaySuffix(currentDate.getDate())}
             </p>
             <div style={{ display: "table", width: "100%", height: "90%" }}>
-              {tasks.slice(tasks.length - 2, tasks.length).map((t) => (
+              {currentTasks.map((t) => (
                 <div
                   className="App-bordered"
                   style={{
@@ -570,6 +618,41 @@ function TaskPage() {
             </Button>
           </div>
         </div>
+      </div>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        gap: '10px',
+        marginTop: '20px' 
+      }}>
+        <Button 
+          onClick={() => paginate(currentPage - 1)} 
+          disabled={currentPage === 1}
+          style={{
+            backgroundColor: '#606c38',
+            border: 'none',
+            padding: '5px 10px'
+          }}
+        >
+          Previous
+        </Button>
+        <span style={{ 
+          display: 'flex', 
+          alignItems: 'center' 
+        }}>
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button 
+          onClick={() => paginate(currentPage + 1)} 
+          disabled={currentPage === totalPages}
+          style={{
+            backgroundColor: '#606c38',
+            border: 'none',
+            padding: '5px 10px'
+          }}
+        >
+          Next
+        </Button>
       </div>
     </>
   );
