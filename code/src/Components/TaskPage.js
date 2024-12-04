@@ -6,127 +6,70 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "./firebase";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { editTask } from "./TaskLogic"; //not yet implemented
+import { TASK_TYPES, REPEAT_TYPES, generateTimeOptions, getDaySuffix, editTask } from "./TaskLogic";
 import Calendar from "react-calendar";
 import "react-calendar/dist/cjs";
 import "./../App.css";
 
 function TaskPage() {
   const navigate = useNavigate();
-  const [title, setTitle] = useState("");
-  const [task, setTask] = useState("");
-  const [type, setType] = useState("Healthy Eating");
-  const [dueDate, setDueDate] = useState(new Date());
-  const [dueHour, setDueHour] = useState(0);
-  const [dueMinute, setDueMinute] = useState(0);
-  const [isRepeat, setIsRepeat] = useState(false);
-  const [repeatType, setRepeatType] = useState("");
+  const [taskForm, setTaskForm] = useState({
+    title: "",
+    task: "",
+    type: TASK_TYPES[0],
+    dueDate: new Date(),
+    dueHour: 0,
+    dueMinute: 0,
+    isRepeat: false,
+    repeatType: "",
+  });
   const [tasks, setTasks] = useState([]);
-  //const [isComplete, setIsComplete] = useState(false); //not yet implemented
-  const TASKTYPE = [
-    "Healthy Eating",
-    "Rest",
-    "Knowledge",
-    "Social",
-    "Tidyness",
-    "Mental",
-  ];
-  const REPEATTYPE = ["Daily", "Weekly", "Bi-Weekly", "Monthly"];
-  const hours = [];
-  const minutes = [];
+  const { hours, minutes } = generateTimeOptions();
 
-  for (let i = 0; i < 24; i++) {
-    hours.push(i);
-  }
-  for (let i = 0; i < 60; i++) {
-    minutes.push(i);
+  function updateTaskForm(field, value) {
+    setTaskForm(prev => ({ ...prev, [field]: value }));
   }
 
-  function updateType(event) {
-    setType(event.target.value);
+  function updateDueDate(date) {
+    const newDate = new Date(date);
+    newDate.setHours(taskForm.dueHour, taskForm.dueMinute);
+    updateTaskForm('dueDate', newDate);
   }
 
-  function updateRepeat(event) {
-    setIsRepeat(event.target.checked);
+  function updateTime(field, value) {
+    const newDate = new Date(taskForm.dueDate);
+    if (field === 'dueHour') newDate.setHours(value);
+    if (field === 'dueMinute') newDate.setMinutes(value);
+    
+    updateTaskForm('dueDate', newDate);
+    updateTaskForm(field, value);
   }
 
-  function updateRepeatType(event) {
-    setRepeatType(event.target.value);
+  function resetForm() {
+    setTaskForm({
+      title: "",
+      task: "",
+      type: TASK_TYPES[0],
+      dueDate: new Date(),
+      dueHour: 0,
+      dueMinute: 0,
+      isRepeat: false,
+      repeatType: "",
+    });
   }
 
-  function updateDueDate(event) {
-    let newDueDate = new Date(event);
-    newDueDate.setHours(dueDate.getHours(), dueDate.getMinutes());
-    setDueDate(newDueDate);
+  function handleSubmit() {
+    const newTask = editTask(
+      taskForm.title,
+      taskForm.task,
+      taskForm.type,
+      taskForm.dueDate,
+      taskForm.isRepeat
+    );
+    setTasks([...tasks, newTask]);
+    resetForm();
+    closeEditTask();
   }
-  function updateHour(event) {
-    setDueHour(event.target.value);
-  }
-
-  function updateMinute(event) {
-    setDueMinute(event.target.value);
-  }
-
-  function setTimeHour(event) {
-    updateHour(event);
-    let newDueDate = new Date(dueDate);
-    newDueDate.setHours(event.target.value);
-    setDueDate(newDueDate);
-  }
-
-  function setTimeMinute(event) {
-    updateMinute(event);
-    let newDueDate = new Date(dueDate);
-    newDueDate.setMinutes(event.target.value);
-    setDueDate(newDueDate);
-  }
-
-  function updateTasks(task) {
-    const newTasks = [...tasks, task];
-    setTasks(newTasks);
-  }
-
-  // Function to open the modal
-  const openEditTask = () => {
-    const modal = document.getElementById("editTask");
-    if (modal) {
-      modal.style.display = "block";
-    }
-  };
-
-  // Function to close the modal on close
-  const closeEditTask = () => {
-    const modal = document.getElementById("editTask");
-    if (modal) {
-      modal.style.display = "none";
-    }
-    setTitle("");
-    setTask("");
-    setType("Healthy Eating");
-    setDueDate(new Date());
-    setDueHour(0);
-    setDueMinute(0);
-    setIsRepeat(false);
-    setRepeatType("");
-  };
-
-  // Function to close the modal on close on submit
-  const submitTask = () => {
-    const modal = document.getElementById("editTask");
-    if (modal) {
-      modal.style.display = "none";
-    }
-    let newTask = editTask(title, task, type, dueDate, isRepeat);
-    updateTasks(newTask);
-    setTitle("");
-    setTask("");
-    setType("");
-    setDueDate(new Date());
-    setDueHour(0);
-    setDueMinute(0);
-    setIsRepeat(false);
-    setRepeatType("");
-  };
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -159,21 +102,25 @@ function TaskPage() {
       });
   };
 
-  const getDaySuffix = (day) => {
-    switch (day % 10) {
-      case 1:
-        return "st";
-      case 2:
-        return "nd";
-      case 3:
-        return "rd";
-      default:
-        return "th";
+  const currentDate = new Date();
+  const monthName = currentDate.toLocaleString("default", { month: "long" });
+
+  // Function to open the modal
+  const openEditTask = () => {
+    const modal = document.getElementById("editTask");
+    if (modal) {
+      modal.style.display = "block";
     }
   };
 
-  const currentDate = new Date();
-  const monthName = currentDate.toLocaleString("default", { month: "long" });
+  // Function to close the modal
+  const closeEditTask = () => {
+    const modal = document.getElementById("editTask");
+    if (modal) {
+      modal.style.display = "none";
+    }
+    resetForm();
+  };
 
   return (
     <>
@@ -218,6 +165,9 @@ function TaskPage() {
             style={{
               paddingLeft: "5%",
               width: "95%",
+              height: "100%",
+              display: "flex",
+              flexDirection: "column"
             }}
           >
             <p
@@ -225,6 +175,7 @@ function TaskPage() {
                 fontSize: "110%",
                 fontWeight: "600",
                 textDecorationLine: "underline",
+                marginBottom: "10px"
               }}
             >
               Tasks
@@ -235,42 +186,60 @@ function TaskPage() {
                 fontSize: "90%",
                 fontWeight: "400",
                 lineHeight: "20%",
-                paddingBottom: "5%",
+                paddingBottom: "2%"
               }}
             >
               Today's date: {monthName} {currentDate.getDate()}
               {getDaySuffix(currentDate.getDate())}
             </p>
-            <div style={{ display: "table", width: "100%", height: "90%" }}>
-              {tasks.slice(tasks.length - 2, tasks.length).map((t) => (
+            <div style={{ 
+              flex: 1,
+              overflowY: "auto",
+              width: "100%",
+              marginBottom: "20px"
+            }}>
+              {tasks.map((t) => (  // Removed slice to show all tasks
                 <div
                   className="App-bordered"
                   style={{
                     position: "relative",
                     padding: "10px",
                     border: "2px solid gray",
-
                     marginBottom: "2%",
+                    display: "flex",
+                    minHeight: "fit-content",  // Added to ensure box expands
+                    height: "auto",            // Added to allow dynamic height
+                    flexWrap: "wrap"          // Added to handle content wrapping
                   }}
                 >
                   <Col
                     className="Col2"
-                    style={{ width: "10%", position: "fixed", display: "flex" }}
+                    style={{ 
+                      width: "10%",
+                      position: "relative",
+                      display: "flex",
+                      alignItems: "flex-start"  // Added to align content to top
+                    }}
                   >
                     <img
                       src={logo}
                       className="App-logo3"
                       alt="logo"
-                      style={{ margin: "2%" }}
+                      style={{ 
+                        margin: "2%",
+                        width: "125px",     // Increased from 40px
+                        height: "125px"     // Increased from 40px
+                      }}
                     />
                   </Col>
                   <Col
                     className="Col3"
                     style={{
                       width: "50%",
-                      position: "fixed",
+                      position: "relative",
                       display: "flex",
-                      left: "25%",
+                      marginLeft: "15%",
+                      height: "auto"           // Added to allow dynamic height
                     }}
                   >
                     <div>
@@ -278,7 +247,8 @@ function TaskPage() {
                         style={{
                           fontSize: "100%",
                           fontWeight: "600",
-                          lineHeight: "50%",
+                          lineHeight: "1.2",
+                          marginBottom: "8px"
                         }}
                       >
                         {t.title}
@@ -288,13 +258,14 @@ function TaskPage() {
                           color: "gray",
                           fontSize: "90%",
                           fontWeight: "600",
-                          lineHeight: "50%",
+                          lineHeight: "1.2",
+                          marginBottom: "8px"
                         }}
                       >
                         Description: {t.task}. Due date:{" "}
                         {t.dueDate.toLocaleString()}.
                       </p>
-                      <p>
+                      <p style={{ marginBottom: "8px" }}>
                         <Button
                           style={{
                             backgroundColor: "white",
@@ -306,7 +277,7 @@ function TaskPage() {
                           Edit Task
                         </Button>
                       </p>
-                      <Button style={{ top: "20%" }}>Done</Button>
+                      <Button style={{ marginTop: "4px" }}>Done</Button>
                     </div>
                   </Col>
                 </div>
@@ -440,9 +411,9 @@ function TaskPage() {
               <div className="titleForm">
                 <Form.Group controlId="formTitle" as={Row}>
                   <Form.Control
-                    value={title}
+                    value={taskForm.title}
                     placeholder="Task Name"
-                    onChange={(event) => setTitle(event.target.value)}
+                    onChange={(e) => updateTaskForm('title', e.target.value)}
                   />
                 </Form.Group>
               </div>
@@ -464,8 +435,8 @@ function TaskPage() {
                 size="lg"
                 as="textarea"
                 rows={3}
-                value={task}
-                onChange={(event) => setTask(event.target.value)}
+                value={taskForm.task}
+                onChange={(e) => updateTaskForm('task', e.target.value)}
               />
             </Form.Group>
 
@@ -474,11 +445,9 @@ function TaskPage() {
               style={{ gridColumn: "2", gridRow: "1" }}
             >
               <Form.Label>Task Type:</Form.Label>
-              <Form.Select value={type} onChange={updateType}>
-                {TASKTYPE.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
+              <Form.Select value={taskForm.type} onChange={(e) => updateTaskForm('type', e.target.value)}>
+                {TASK_TYPES.map(type => (
+                  <option key={type} value={type}>{type}</option>
                 ))}
               </Form.Select>
             </Form.Group>
@@ -488,7 +457,7 @@ function TaskPage() {
               style={{ gridColumn: "3", gridRow: "1" }}
             >
               <Form.Label>Date:</Form.Label>
-              <Form.Control value={dueDate.toString()} />
+              <Form.Control value={taskForm.dueDate.toString()} />
             </Form.Group>
 
             {/* Bottom Row */}
@@ -497,18 +466,16 @@ function TaskPage() {
                 type="checkbox"
                 id="is-repeat-check"
                 label="Repeat?"
-                checked={isRepeat}
-                onChange={updateRepeat}
+                checked={taskForm.isRepeat}
+                onChange={(e) => updateTaskForm('isRepeat', e.target.checked)}
                 style={{ gridColumn: "1", gridRow: "2" }}
               />
-              {isRepeat && (
+              {taskForm.isRepeat && (
                 <Form.Group controlId="tasktype">
                   <Form.Label>How often?</Form.Label>
-                  <Form.Select value={repeatType} onChange={updateRepeatType}>
-                    {REPEATTYPE.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
+                  <Form.Select value={taskForm.repeatType} onChange={(e) => updateTaskForm('repeatType', e.target.value)}>
+                    {REPEAT_TYPES.map(type => (
+                      <option key={type} value={type}>{type}</option>
                     ))}
                   </Form.Select>
                 </Form.Group>
@@ -518,14 +485,14 @@ function TaskPage() {
             <div style={{ gridColumn: "2", gridRow: "2" }}>
               <Form.Label>Time:</Form.Label>
               <div className="timeDropdowns">
-                <Form.Select value={dueHour} onChange={setTimeHour}>
+                <Form.Select value={taskForm.dueHour} onChange={(e) => updateTime('dueHour', e.target.value)}>
                   {hours.map((hour) => (
                     <option key={hour} value={hour}>
                       {hour}
                     </option>
                   ))}
                 </Form.Select>
-                <Form.Select value={dueMinute} onChange={setTimeMinute}>
+                <Form.Select value={taskForm.dueMinute} onChange={(e) => updateTime('dueMinute', e.target.value)}>
                   {minutes.map((minute) => (
                     <option key={minute} value={minute}>
                       {minute}
@@ -536,7 +503,7 @@ function TaskPage() {
             </div>
             <Calendar
               onChange={updateDueDate}
-              value={dueDate}
+              value={taskForm.dueDate}
               className="calendar"
               style={{ gridColumn: "3", gridRow: "2" }}
             />
@@ -544,7 +511,7 @@ function TaskPage() {
           {/* Modal Footer*/}
           <div className="modalFooter">
             <Button className="smallButton">Set Reminder</Button>
-            <Button onClick={submitTask} className="largeButton">
+            <Button onClick={handleSubmit} className="largeButton">
               Submit
             </Button>
           </div>
