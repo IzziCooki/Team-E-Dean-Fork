@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import logo from "./../logo.svg";
 import logo2 from "./../logo2.svg";
 import Award from "./../Award.svg";
@@ -38,6 +38,8 @@ function TaskPage() {
   const minutes = [];
   const [currentPage, setCurrentPage] = useState(1);
   const tasksPerPage = 2;
+  const [editingTask, setEditingTask] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   for (let i = 0; i < 24; i++) {
     hours.push(i);
@@ -112,6 +114,8 @@ function TaskPage() {
     setDueMinute(0);
     setIsRepeat(false);
     setRepeatType("");
+    setIsEditing(false);
+    setEditingTask(null);
   };
 
 
@@ -122,12 +126,32 @@ function TaskPage() {
     if (modal) {
       modal.style.display = "none";
     }
-    let newTask = editTask(title, task, type, dueDate, isRepeat);
-    updateTasks(newTask);
-    saveTaskToFirestore(newTask);
+
+    const taskData = {
+      title,
+      task,
+      type,
+      dueDate,
+      isRepeat,
+      repeatType
+    };
+
+    if (isEditing) {
+      // Update existing task
+      updateTaskInFirestore(taskData);
+      setIsEditing(false);
+      setEditingTask(null);
+    } else {
+      // Create new task
+      let newTask = editTask(title, task, type, dueDate, isRepeat);
+      updateTasks(newTask);
+      saveTaskToFirestore(newTask);
+    }
+
+    // Reset form
     setTitle("");
     setTask("");
-    setType("");
+    setType("Healthy Eating");
     setDueDate(new Date());
     setDueHour(0);
     setDueMinute(0);
@@ -142,10 +166,10 @@ function TaskPage() {
         return;
       }
   
-      // Convert the JavaScript Date to Firestore Timestamp before saving
+      // Convert the date to an ISO string before saving
       const taskWithTimestamp = {
         ...taskData,
-        dueDate: new Date(taskData.dueDate) // Ensure it's a Date object
+        dueDate: taskData.dueDate.toISOString()
       };
   
       const userDocRef = doc(db, "user", userId);
@@ -158,7 +182,13 @@ function TaskPage() {
     }
   };
   
-  const fetchTasksFromFirestore = async () => {
+  // Add this helper function to check if a date is valid
+  const isValidDate = (date) => {
+    return date instanceof Date && !isNaN(date);
+  };
+
+  // Wrap fetchTasksFromFirestore in useCallback
+  const fetchTasksFromFirestore = useCallback(async () => {
     try {
       const userId = auth.currentUser?.uid;
       if (!userId) {
@@ -172,24 +202,23 @@ function TaskPage() {
       if (docSnap.exists()) {
         const userData = docSnap.data();
         if (userData.tasks) {
-          console.log('Raw tasks from Firestore:', userData.tasks); // Debug log
-          const processedTasks = userData.tasks.map(task => {
-            console.log('Task due date before processing:', task.dueDate); // Debug log
-            return {
+          console.log('Raw tasks from Firestore:', userData.tasks);
+          const processedTasks = userData.tasks
+            .map(task => ({
               ...task,
               dueDate: new Date(task.dueDate)
-            };
-          });
+            }))
+            .filter(task => isValidDate(task.dueDate));
+          
+          console.log('Processed tasks:', processedTasks);
           setTasks(processedTasks);
         }
       }
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
-  };
-  
+  }, []); // Empty dependency array because it doesn't depend on any props or state
 
-  // Modify the existing useEffect to fetch tasks when component mounts
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -197,7 +226,6 @@ function TaskPage() {
         const email = user.email;
         console.log("uid", uid);
         console.log("email", email);
-        // Fetch tasks when user is authenticated
         fetchTasksFromFirestore();
       } else {
         console.log("user is logged out");
@@ -205,9 +233,8 @@ function TaskPage() {
       }
     });
 
-    // Cleanup subscription
     return () => unsubscribe();
-  }, []); // Empty dependency array to run only on mount
+  }, [fetchTasksFromFirestore, navigate]); // Include fetchTasksFromFirestore and navigate
 
   const handleLogout = () => {
     signOut(auth)
@@ -239,10 +266,57 @@ function TaskPage() {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  // Update the pagination calculations to use only valid tasks
+  const validTasks = tasks.filter(task => isValidDate(task.dueDate));
+  const reversedTasks = [...validTasks].reverse();
   const indexOfLastTask = currentPage * tasksPerPage;
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
-  const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
-  const totalPages = Math.ceil(tasks.length / tasksPerPage);
+  const currentTasks = reversedTasks.slice(indexOfFirstTask, indexOfLastTask);
+  const totalPages = Math.ceil(validTasks.length / tasksPerPage);
+
+  const startEditingTask = (task) => {
+    setEditingTask(task);
+    setIsEditing(true);
+    setTitle(task.title);
+    setTask(task.task);
+    setType(task.type || "Healthy Eating");
+    setDueDate(new Date(task.dueDate));
+    setIsRepeat(task.isRepeat || false);
+    setRepeatType(task.repeatType || "");
+    openEditTask();
+  };
+
+  const updateTaskInFirestore = async (updatedTask) => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        console.error("No user is signed in");
+        return;
+      }
+
+      const userDocRef = doc(db, "user", userId);
+      const docSnap = await getDoc(userDocRef);
+
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        const updatedTasks = userData.tasks.map(task => 
+          task.title === editingTask.title ? {
+            ...updatedTask,
+            dueDate: updatedTask.dueDate.toISOString()
+          } : task
+        );
+
+        await updateDoc(userDocRef, {
+          tasks: updatedTasks
+        });
+
+        console.log("Task successfully updated in Firestore");
+        fetchTasksFromFirestore(); // Refresh the tasks list
+      }
+    } catch (error) {
+      console.error("Error updating task in Firestore:", error);
+    }
+  };
 
   return (
     <>
@@ -361,7 +435,15 @@ function TaskPage() {
                         }}
                       >
                         Description: {t.task}. Due date:{" "}
-                        {t.dueDate.toLocaleString()}.
+                        {t.dueDate instanceof Date && !isNaN(t.dueDate) 
+                          ? t.dueDate.toLocaleString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })
+                          : 'Invalid date'}
                       </p>
                       <p>
                         <Button
@@ -371,6 +453,7 @@ function TaskPage() {
                             textDecorationLine: "underline",
                             padding: "0%",
                           }}
+                          onClick={() => startEditingTask(t)}
                         >
                           Edit Task
                         </Button>
@@ -468,26 +551,22 @@ function TaskPage() {
             >
               {currentDate.getMonth() + 1}/{currentDate.getDate()}
             </p>
-            {tasks.slice(tasks.length - 2, tasks.length).map((t) => (
-              <div>
-                <p
-                  style={{
-                    fontSize: "90%",
-                    fontWeight: "600",
-                    lineHeight: "50%",
-                    paddingTop: "20%",
-                  }}
-                >
+            {reversedTasks.slice(0, 2).map((t) => (
+              <div key={t.title}>
+                <p style={{
+                  fontSize: "90%",
+                  fontWeight: "600",
+                  lineHeight: "50%",
+                  paddingTop: "20%",
+                }}>
                   {t.title}
                 </p>
-                <p
-                  style={{
-                    fontSize: "80%",
-                    fontWeight: "400",
-                    lineHeight: "50%",
-                    color: "gray",
-                  }}
-                >
+                <p style={{
+                  fontSize: "80%",
+                  fontWeight: "400",
+                  lineHeight: "50%",
+                  color: "gray",
+                }}>
                   {t.task}
                 </p>
               </div>
@@ -510,7 +589,7 @@ function TaskPage() {
                 <Form.Group controlId="formTitle" as={Row}>
                   <Form.Control
                     value={title}
-                    placeholder="Task Name"
+                    placeholder={isEditing ? "Edit Task Name" : "Task Name"}
                     onChange={(event) => setTitle(event.target.value)}
                   />
                 </Form.Group>
