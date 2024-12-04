@@ -22,7 +22,7 @@ function TaskPage({ points, setPoints }) {
   const [isRepeat, setIsRepeat] = useState(false);
   const [repeatType, setRepeatType] = useState("");
   const [tasks, setTasks] = useState([]);
-  const [isComplete, setIsComplete] = useState(false); //not yet implemented
+  //const [isComplete, setIsComplete] = useState(false); //not yet implemented
   const TASKTYPE = [
     "Healthy Eating",
     "Rest",
