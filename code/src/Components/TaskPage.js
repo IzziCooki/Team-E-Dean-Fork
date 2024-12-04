@@ -40,8 +40,6 @@ function TaskPage() {
   const tasksPerPage = 2;
   const [editingTask, setEditingTask] = useState(null);
   const [editingTaskIndex, setEditingTaskIndex] = useState(null);
-  const [upcomingCurrentPage, setUpcomingCurrentPage] = useState(1);
-  const upcomingTasksPerPage = 2;
 
   for (let i = 0; i < 24; i++) {
     hours.push(i);
@@ -275,19 +273,10 @@ function TaskPage() {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Add this function to filter valid tasks
-  const getValidTasks = (tasks) => {
-    return tasks.filter(t => t.dueDate instanceof Date && !isNaN(t.dueDate));
-  };
-
-  // Modify the pagination logic
   const indexOfLastTask = currentPage * tasksPerPage;
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
-  const validTasks = getValidTasks(tasks); // Filter out invalid tasks
-  const currentTasks = validTasks.slice(indexOfFirstTask, indexOfLastTask);
-  const totalPages = Math.ceil(validTasks.length / tasksPerPage);
-
-  const paginateUpcoming = (pageNumber) => setUpcomingCurrentPage(pageNumber);
+  const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
+  const totalPages = Math.ceil(tasks.length / tasksPerPage);
 
   // Add this function to update a task in Firestore
   const updateTaskInFirestore = async (updatedTask, taskIndex) => {
@@ -318,14 +307,6 @@ function TaskPage() {
       console.error("Error updating task in Firestore:", error);
     }
   };
-
-  // Update the upcoming tasks pagination as well
-  const validUpcomingTasks = getValidTasks(tasks)
-    .sort((a, b) => b.dueDate - a.dueDate)
-    .slice(
-      (upcomingCurrentPage - 1) * upcomingTasksPerPage,
-      upcomingCurrentPage * upcomingTasksPerPage
-    );
 
   return (
     <>
@@ -395,84 +376,74 @@ function TaskPage() {
             </p>
             <div style={{ display: "table", width: "100%", height: "90%" }}>
               {currentTasks.map((t, index) => (
-                t.dueDate instanceof Date && !isNaN(t.dueDate) && (
-                  <div
-                    className="App-bordered"
-                    style={{
-                      position: "relative",
-                      padding: "10px",
-                      border: "2px solid gray",
-                      marginBottom: "2%",
-                    }}
-                    key={index}
+                <div
+                  className="App-bordered"
+                  style={{
+                    position: "relative",
+                    padding: "10px",
+                    border: "2px solid gray",
+
+                    marginBottom: "2%",
+                  }}
+                >
+                  <Col
+                    className="Col2"
+                    style={{ width: "10%", position: "fixed", display: "flex" }}
                   >
-                    <Col
-                      className="Col2"
-                      style={{ width: "10%", position: "fixed", display: "flex" }}
-                    >
-                      <img
-                        src={logo}
-                        className="App-logo3"
-                        alt="logo"
-                        style={{ margin: "2%" }}
-                      />
-                    </Col>
-                    <Col
-                      className="Col3"
-                      style={{
-                        width: "50%",
-                        position: "fixed",
-                        display: "flex",
-                        left: "25%",
-                        maxWidth: "40%"
-                      }}
-                    >
-                      <div style={{ width: "100%" }}>
-                        <p
+                    <img
+                      src={logo}
+                      className="App-logo3"
+                      alt="logo"
+                      style={{ margin: "2%" }}
+                    />
+                  </Col>
+                  <Col
+                    className="Col3"
+                    style={{
+                      width: "50%",
+                      position: "fixed",
+                      display: "flex",
+                      left: "25%",
+                    }}
+                  >
+                    <div>
+                      <p
+                        style={{
+                          fontSize: "100%",
+                          fontWeight: "600",
+                          lineHeight: "50%",
+                        }}
+                      >
+                        {t.title}
+                      </p>
+                      <p
+                        style={{
+                          color: "gray",
+                          fontSize: "90%",
+                          fontWeight: "600",
+                          lineHeight: "50%",
+                        }}
+                      >
+                        Description: {t.task}. Due date:{" "}
+                        {t.dueDate.toLocaleString()}.
+                      </p>
+                      <p>
+                        <Button
                           style={{
-                            fontSize: "100%",
-                            fontWeight: "600",
-                            lineHeight: "1.2",
-                            marginBottom: "8px"
+                            backgroundColor: "white",
+                            border: "none",
+                            textDecorationLine: "underline",
+                            padding: "0%",
                           }}
+                          onClick={() => openEditExistingTask(t, tasks.indexOf(t))}
                         >
-                          {t.title}
-                        </p>
-                        <p
-                          style={{
-                            color: "gray",
-                            fontSize: "90%",
-                            fontWeight: "600",
-                            lineHeight: "1.2",
-                            whiteSpace: "normal",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            display: "-webkit-box",
-                            WebkitLineClamp: "3",
-                            WebkitBoxOrient: "vertical",
-                            marginBottom: "8px"
-                          }}
-                        >
-                          Description: {t.task}. Due date: {t.dueDate.toLocaleString()}.
-                        </p>
-                        <p>
-                          <Button
-                            style={{
-                              backgroundColor: "white",
-                              border: "none",
-                              textDecorationLine: "underline",
-                              padding: "0%"
-                            }}
-                            onClick={() => openEditExistingTask(t, tasks.indexOf(t))}
-                          >
-                            Edit Task
-                          </Button>
-                        </p>
-                        <Button style={{ top: "20%" }}>Done</Button>
-                      </div>
-                    </Col>
-                  </div>
-                )
+                          Edit Task
+                        </Button>
+                      </p>
+                      <Button style={{ top: "20%" }}>Done</Button>
+                    </div>
+                  </Col>
+                </div>
               ))}
             </div>
           </div>
@@ -541,7 +512,7 @@ function TaskPage() {
             borderRadius: "5px",
           }}
         >
-          <div style={{ paddingLeft: "7%", width: "100%" }}>
+          <div style={{ paddingLeft: "7%" }}>
             <p
               style={{
                 fontSize: "100%",
@@ -562,7 +533,7 @@ function TaskPage() {
             >
               {currentDate.getMonth() + 1}/{currentDate.getDate()}
             </p>
-            {validUpcomingTasks.map((t) => (
+            {tasks.slice(tasks.length - 2, tasks.length).map((t) => (
               <div>
                 <p
                   style={{
@@ -586,48 +557,6 @@ function TaskPage() {
                 </p>
               </div>
             ))}
-            <div style={{ 
-              display: "flex",
-              justifyContent: "center",
-              gap: "5px",
-              marginTop: "10px",
-            }}>
-              <Button
-                onClick={() => paginateUpcoming(upcomingCurrentPage - 1)}
-                disabled={upcomingCurrentPage === 1}
-                style={{
-                  backgroundColor: "#606c38",
-                  border: "none",
-                  padding: "2px 5px",
-                  fontSize: "12px",
-                }}
-              >
-                Prev
-              </Button>
-              <span
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  fontSize: "12px",
-                }}
-              >
-                {upcomingCurrentPage}/{Math.ceil(validTasks.length / upcomingTasksPerPage)}
-              </span>
-              <Button
-                onClick={() => paginateUpcoming(upcomingCurrentPage + 1)}
-                disabled={
-                  upcomingCurrentPage === Math.ceil(validTasks.length / upcomingTasksPerPage)
-                }
-                style={{
-                  backgroundColor: "#606c38",
-                  border: "none",
-                  padding: "2px 5px",
-                  fontSize: "12px",
-                }}
-              >
-                Next
-              </Button>
-            </div>
           </div>
         </Col>
       </div>
