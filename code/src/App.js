@@ -1,6 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { auth, db } from "./Components/firebase";
+import { doc, getDoc } from "firebase/firestore";
 import Login from "./Components/Loginpage";
 import HomePage from "./Components/Homepage";
 import SignUp from "./Components/RegisterPage";
@@ -11,6 +13,20 @@ import "./App.css";
 
 function App() {
   const [points, setPoints] = useState(0);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, "user", user.uid));
+        if (userDoc.exists() && userDoc.data().points !== undefined) {
+          setPoints(userDoc.data().points);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <Router>
         <div>
