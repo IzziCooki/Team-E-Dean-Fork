@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import logo from "./../logo.svg";
 import logo2 from "./../logo2.svg";
 import Award from "./../Award.svg";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "./firebase";
+import { auth, db } from "./firebase";
+import { doc, arrayUnion, updateDoc, getDoc } from "firebase/firestore";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { TASK_TYPES, REPEAT_TYPES, generateTimeOptions, getDaySuffix, editTask } from "./TaskLogic";
@@ -22,10 +23,11 @@ function TaskPage({ points, setPoints }) {
     dueMinute: 0,
     isRepeat: false,
     repeatType: "",
-    points: 0,
+    points: 15,
   });
   const [tasks, setTasks] = useState([]);
   const { hours, minutes } = generateTimeOptions();
+  const [editingTask, setEditingTask] = useState(null);
 
   function updateTaskForm(field, value) {
     setTaskForm(prev => ({ ...prev, [field]: value }));
@@ -41,16 +43,41 @@ function TaskPage({ points, setPoints }) {
     console.log(`Avatar updated based on task type: ${task.type}`);
   };
 
-  const completeTask = (task) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((t) =>
-        t === task ? { ...t, setIsComplete: true } : t
-      )
-    );
-    setPoints((prevPoints) => prevPoints + 15); // change 15 to task.rewardPoints if each task has custom points
-    updateAvatar(task); // Call avatar update here
-  };
+  const completeTask = async (task) => {
+    try {
+      // Update local state
+      setPoints((prevPoints) => prevPoints + task.points); 
+      setTasks((prevTasks) => prevTasks.filter((t) => t !== task));
+      updateAvatar(task);
 
+      // Update Firestore
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        console.error("No user is signed in");
+        return;
+      }
+
+      const userDocRef = doc(db, "user", userId);
+      const docSnap = await getDoc(userDocRef);
+      
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        const updatedTasks = userData.tasks.filter(t => 
+          t.title !== task.title || 
+          t.task !== task.task || 
+          t.dueDate !== task.dueDate.toISOString()
+        );
+        
+        // Update both tasks and points in one operation
+        await updateDoc(userDocRef, { 
+          tasks: updatedTasks,
+          points: (userData.points || 0) + task.points // Add points to existing total or start at 0
+        });
+      }
+    } catch (error) {
+      console.error("Error updating Firestore:", error);
+    }
+  };
 
   function updateTime(field, value) {
     const newDate = new Date(taskForm.dueDate);
@@ -71,24 +98,121 @@ function TaskPage({ points, setPoints }) {
       dueMinute: 0,
       isRepeat: false,
       repeatType: "",
+      points: 15,
     });
   }
 
+  const saveTaskToFirestore = async (taskData) => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        console.error("No user is signed in");
+        return;
+      }
+
+      const userDocRef = doc(db, "user", userId);
+      const docSnap = await getDoc(userDocRef);
+      
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        let updatedTasks = [...(userData.tasks || [])];
+        
+        // If editing, remove the old task
+        if (editingTask) {
+          updatedTasks = updatedTasks.filter(t => 
+            t.title !== editingTask.title || 
+            t.task !== editingTask.task || 
+            t.dueDate !== editingTask.dueDate.toISOString()
+          );
+        }
+        
+        // Add the new/updated task
+        updatedTasks.push({
+          ...taskData,
+          dueDate: taskData.dueDate.toISOString()
+        });
+
+        // Update with the new array instead of using arrayUnion
+        await updateDoc(userDocRef, {
+          tasks: updatedTasks
+        });
+      }
+      
+      console.log("Task successfully saved to Firestore");
+    } catch (error) {
+      console.error("Error saving task to Firestore:", error);
+    }
+  };
+
+  // Add this helper function to check if a date is valid
+  const isValidDate = (date) => {
+    return date instanceof Date && !isNaN(date);
+  };
+
+  // Wrap fetchTasksFromFirestore in useCallback
+  const fetchTasksFromFirestore = useCallback(async () => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        console.error("No user is signed in");
+        return;
+      }
+
+      const userDocRef = doc(db, "user", userId);
+      const docSnap = await getDoc(userDocRef);
+
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        if (userData.tasks) {
+          console.log('Raw tasks from Firestore:', userData.tasks);
+          const processedTasks = userData.tasks
+            .map(task => ({
+              ...task,
+              dueDate: new Date(task.dueDate)
+            }))
+            .filter(task => isValidDate(task.dueDate));
+
+          console.log('Processed tasks:', processedTasks);
+          setTasks(processedTasks);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  }, []); // Empty dependency array because it doesn't depend on any props or state
+
   function handleSubmit() {
-    const newTask = editTask(
+    const updatedTask = editTask(
       taskForm.title,
       taskForm.task,
       taskForm.type,
       taskForm.dueDate,
-      taskForm.isRepeat
+      taskForm.isRepeat,
+      taskForm.points
     );
-    setTasks([...tasks, newTask]);
+
+    if (editingTask) {
+      // Update existing task and sort
+      setTasks(prevTasks => 
+        [...prevTasks.map(task => 
+          task === editingTask ? updatedTask : task
+        )].sort((a, b) => a.dueDate - b.dueDate)
+      );
+      setEditingTask(null);
+    } else {
+      // Add new task and sort
+      setTasks(prevTasks => 
+        [...prevTasks, updatedTask].sort((a, b) => a.dueDate - b.dueDate)
+      );
+    }
+    
     resetForm();
     closeEditTask();
+    saveTaskToFirestore(updatedTask);
   }
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/firebase.User
@@ -97,6 +221,7 @@ function TaskPage({ points, setPoints }) {
         // ...
         console.log("uid", uid);
         console.log("email", email);
+        fetchTasksFromFirestore();
       } else {
         // User is signed out
         // ...
@@ -104,7 +229,8 @@ function TaskPage({ points, setPoints }) {
         navigate("/");
       }
     });
-  });
+    return () => unsubscribe();
+  }, [fetchTasksFromFirestore, navigate]); // Include fetchTasksFromFirestore and navigate
 
   const handleLogout = () => {
     signOut(auth)
@@ -135,7 +261,24 @@ function TaskPage({ points, setPoints }) {
     if (modal) {
       modal.style.display = "none";
     }
+    setEditingTask(null);
     resetForm();
+  };
+
+  const startEditingTask = (task) => {
+    setEditingTask(task);
+    setTaskForm({
+      title: task.title,
+      task: task.task,
+      type: task.type,
+      dueDate: new Date(task.dueDate),
+      dueHour: task.dueDate.getHours(),
+      dueMinute: task.dueDate.getMinutes(),
+      isRepeat: task.isRepeat || false,
+      repeatType: task.repeatType || "",
+      points: task.points,
+    });
+    openEditTask();
   };
 
   return (
@@ -301,11 +444,12 @@ function TaskPage({ points, setPoints }) {
                             textDecorationLine: "underline",
                             padding: "0%",
                           }}
+                          onClick={() => startEditingTask(t)}
                         >
                           Edit Task
                         </Button>
                       </p>
-                      <Button style={{ top: "20%" }} onClick={() => completeTask(taskForm)}>Done</Button>
+                      <Button style={{ top: "20%" }} onClick={() => completeTask(t)}>Done</Button>
 
                     </div>
                   </Col>
@@ -399,14 +543,14 @@ function TaskPage({ points, setPoints }) {
             >
               {currentDate.getMonth() + 1}/{currentDate.getDate()}
             </p>
-            {tasks.slice(tasks.length - 2, tasks.length).map((t) => (
+            {tasks.slice(0, 2).map((t) => (
               <div>
                 <p
                   style={{
                     fontSize: "90%",
                     fontWeight: "600",
                     lineHeight: "50%",
-                    paddingTop: "20%",
+                    paddingTop: "5%",
                   }}
                 >
                   {t.title}
@@ -419,7 +563,7 @@ function TaskPage({ points, setPoints }) {
                     color: "gray",
                   }}
                 >
-                  {t.task}
+                  Due: {t.dueDate.toLocaleString()}
                 </p>
               </div>
             ))}
