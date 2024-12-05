@@ -4,7 +4,7 @@ import logo2 from "./../logo2.svg";
 import Award from "./../Award.svg";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "./firebase";
-import { doc, arrayUnion, updateDoc, getDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { TASK_TYPES, REPEAT_TYPES, generateTimeOptions, getDaySuffix, editTask } from "./TaskLogic";
