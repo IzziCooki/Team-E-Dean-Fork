@@ -24,19 +24,19 @@ export const getDaySuffix = (day) => {
   }
 };
 
-export const editTask = (title, task, type, dueDate, isRepeat) => {
+export const editTask = (title, task, type, dueDate, isRepeat, points) => {
   return {
     title,
     task,
     type,
     dueDate,
     isRepeat,
+    points,
   };
 };
 
-export function taskToString (task)
-{
+export function taskToString(task) {
     return (
-        task.title + "\n" + task.task + "\n" + task.type + "\n" + task.dueDate.toString() + "\n" + task.isRepeat.toString() + "\n" 
+        task.title + "\n" + task.task + "\n" + task.type + "\n" + task.dueDate.toString() + "\n" + task.isRepeat.toString() + "\n" + task.points.toString() + "\n"
     )
 }

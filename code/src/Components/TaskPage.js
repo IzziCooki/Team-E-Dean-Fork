@@ -22,6 +22,7 @@ function TaskPage({ points, setPoints }) {
     dueMinute: 0,
     isRepeat: false,
     repeatType: "",
+    points: 0,
   });
   const [tasks, setTasks] = useState([]);
   const { hours, minutes } = generateTimeOptions();
@@ -304,7 +305,7 @@ function TaskPage({ points, setPoints }) {
                           Edit Task
                         </Button>
                       </p>
-                      <Button style={{ top: "20%" }} onClick={() => completeTask(task)}>Done</Button>
+                      <Button style={{ top: "20%" }} onClick={() => completeTask(taskForm)}>Done</Button>
 
                     </div>
                   </Col>
