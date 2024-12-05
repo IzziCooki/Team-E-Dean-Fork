@@ -11,7 +11,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/cjs";
 import "./../App.css";
 
-function TaskPage() {
+function TaskPage({ points, setPoints }) {
   const navigate = useNavigate();
   const [taskForm, setTaskForm] = useState({
     title: "",
@@ -35,6 +35,21 @@ function TaskPage() {
     newDate.setHours(taskForm.dueHour, taskForm.dueMinute);
     updateTaskForm('dueDate', newDate);
   }
+
+  const updateAvatar = (task) => {
+    console.log(`Avatar updated based on task type: ${task.type}`);
+  };
+
+  const completeTask = (task) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((t) =>
+        t === task ? { ...t, setIsComplete: true } : t
+      )
+    );
+    setPoints((prevPoints) => prevPoints + 15); // change 15 to task.rewardPoints if each task has custom points
+    updateAvatar(task); // Call avatar update here
+  };
+
 
   function updateTime(field, value) {
     const newDate = new Date(taskForm.dueDate);
@@ -129,6 +144,18 @@ function TaskPage() {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <img src={logo2} className="App-logo2" alt="logo" />
+          {/* Points Display */}
+          <div
+            className="points-display"
+            style={{
+              padding: '10px',
+              backgroundColor: "white",
+              fontWeight: "bold",
+              color: "darkgreen",
+            }}
+          >
+            Points: {points} {/* Dynamically show points */}
+          </div>
           <div className="App-buttons">
             <Button
               onClick={() => {
@@ -277,7 +304,8 @@ function TaskPage() {
                           Edit Task
                         </Button>
                       </p>
-                      <Button style={{ marginTop: "4px" }}>Done</Button>
+                      <Button style={{ top: "20%" }} onClick={() => completeTask(task)}>Done</Button>
+
                     </div>
                   </Col>
                 </div>
