@@ -282,11 +282,11 @@
 /* Modal Main Content */
 .modalContentFrame {
   align-self: center;
-  display: grid; 
+  display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: auto auto;
-  gap: 100px 40px;
-  justify-content: center; 
+  gap: 20px 40px;
+  justify-content: center;
   align-items: center;
   width: 85%;
   padding: 20px 50px;
@@ -297,9 +297,9 @@
   max-width: 300px;
 }
 
-.modalContentFrame .form-control, 
+.modalContentFrame .form-control,
 .modalContentFrame .form-select {
-  width: 100%; 
+  width: 100%;
 }
 
 .timeDropdowns {
@@ -308,7 +308,7 @@
 }
 
 .timeDropdowns select {
-  flex: 1; 
+  flex: 1;
 }
 
 .modalContentFrame .calendar {
@@ -334,7 +334,7 @@
   justify-content: space-between; /* Push items to the left and right */
   align-items: center; /* Vertically center items */
   width: 98%; /* Full-width footer */
-  padding: 100px 20px; /* Add some padding for spacing */
+  padding: 20px 20px; /* Add some padding for spacing */
 }
 
 .modalFooter .smallButton {
@@ -342,7 +342,7 @@
   font-size: 0.8rem;
   background: #ffffff;
   border: none;
-  border-bottom: 2px solid #B2B2B2;
+  border-bottom: 2px solid #b2b2b2;
   border-radius: 0;
   outline: none;
   transition: border-bottom-color 0.3s ease;
@@ -360,7 +360,6 @@
   border-radius: var(--Radius-100, 4px);
   background: #283618;
 }
-
 
 @keyframes App-logo-spin {
   from {

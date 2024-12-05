@@ -20,11 +20,11 @@ describe("Avatar page components", () => {
             <App />
           </Router>
         );
-      
+
         const homeButton = screen.getByText(/Home/i);
         const tasksButton = screen.getByText(/Tasks/i);
         const signOutButton = screen.getByText(/Sign Out/i);
-      
+
         expect(homeButton).toBeInTheDocument();
         expect(tasksButton).toBeInTheDocument();
         expect(signOutButton).toBeInTheDocument();
@@ -38,30 +38,53 @@ describe("Avatar page components", () => {
         );
         const dropdownButtons = [
           "Background", "Skin Tone", "Eye Color", "Hair", "Hats", "Outfits"
-        ].map(text => screen.getByText(text));        
+        ].map(text => screen.getByText(text));
         expect(dropdownButtons.length).toBe(6);
       });
 
-    //   test("displays the menu when the dropdown button is clicked", () => {
-    //     render(
-    //       <Router>
-    //         <App />
-    //       </Router>
-    //     );
-    
-    //     // Find the dropdown button
-    //     const dropdownButton = screen.getByText(/None/i); // Adjust text as necessary
-    
-    //     // Initially, the menu should not be visible
-    //     const dropdownMenu = screen.queryByText(/hearts/i); // Adjust text as necessary
-    //     expect(dropdownMenu).not.toBeInTheDocument();
-    
-    //     // Simulate clicking the dropdown button
-    //     fireEvent.click(dropdownButton);
-    
-    //     // Now, the menu should be visible
-    //     const visibleMenu = screen.getByText(/hearts/i); // Adjust text as necessary
-    //     expect(visibleMenu).toBeInTheDocument();
-    //   });
-    
+
+      test("displays the menu when the dropdown button is clicked", () => {
+        render(
+          <Router>
+            <App />
+          </Router>
+        );
+
+        const dropdownButton = screen.getByTestId('dropdown-button-0');
+
+        const dropdownMenu = screen.queryByText('Hearts');
+        expect(dropdownMenu).not.toBeInTheDocument();
+
+        fireEvent.click(dropdownButton);
+
+        const visibleMenu = screen.getByText('Hearts');
+        expect(visibleMenu).toBeInTheDocument();
+      });
+
+
+      test("multiple selections update the state and display correct images", () => {
+        render(
+          <Router>
+            <App />
+          </Router>
+        );
+
+        fireEvent.click(screen.getByTestId('dropdown-button-0'));
+
+        fireEvent.click(screen.getByText('Hearts'));
+
+        fireEvent.click(screen.getByTestId('dropdown-button-1'));
+
+        fireEvent.click(screen.getByText('Fair'));
+
+        const heartsImage = screen.getAllByAltText('avatar-option')[0];
+        expect(heartsImage).toBeInTheDocument();
+        expect(heartsImage.src).toContain('bghearts.png');
+
+        const skinImage = screen.getAllByAltText('avatar-option')[1];
+        expect(skinImage).toBeInTheDocument();
+        expect(skinImage.src).toContain('skin1.png');
+    });
+
+
 });
