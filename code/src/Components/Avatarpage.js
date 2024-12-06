@@ -138,9 +138,14 @@ function AvatarPage({ points, setPoints, userInventory, setUserInventory}) {
   const selectedImages = getSelectedImages();
 
   //Function to check if reward is locked
-  const isLocked = (option) =>
-    !userInventory.includes(option) &&
-    cosmeticRewards.some((r) => r.id === option);
+  const isLocked = (option) => {
+    return (
+      Array.isArray(userInventory) &&
+      !userInventory.includes(option) &&
+      cosmeticRewards.some((r) => r.id === option)
+    );
+  };
+  
 
   // Function to purchase rewards when clicking locked options
   const handlePurchase = async (option) => {
