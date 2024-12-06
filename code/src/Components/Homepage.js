@@ -13,7 +13,7 @@ import { db } from "./firebase";
 import { doc, getDoc } from 'firebase/firestore';
 
 
-function App() {
+function App({ points, setPoints }) {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
 
@@ -116,10 +116,23 @@ function App() {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <img src={logo2} className="App-logo2" alt="logo" />
+          {/* Points Display */}
+          <div
+            className="points-display"
+            style={{
+              padding: '10px',
+              backgroundColor: "white",
+              fontWeight: "bold",
+              color: "darkgreen",
+            }}
+          >
+            Points: {points} {/* Dynamically show points */}
+          </div>
           <div className="App-buttons">
             <div>
               Hello {userName}
-            </div>
+            </div> 
+            
             <Button
               onClick={() => {
                 navigate("/task");
